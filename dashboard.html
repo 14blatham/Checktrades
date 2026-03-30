@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Supplier Dashboard | EastMidlandsTrade</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "error": "#ba1a1a",
+                        "on-secondary-container": "#5f6178",
+                        "on-secondary-fixed": "#181a2e",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "surface-tint": "#545e76",
+                        "error-container": "#ffdad6",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#43455b",
+                        "outline-variant": "#c5c6cd",
+                        "on-tertiary-container": "#ab8844",
+                        "inverse-primary": "#bbc6e2",
+                        "secondary-fixed-dim": "#c4c4df",
+                        "outline": "#75777d",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed": "#101b30",
+                        "on-error": "#ffffff",
+                        "surface-bright": "#fbf8ff",
+                        "on-background": "#181a2e",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "primary-fixed-dim": "#bbc6e2",
+                        "surface-container": "#edecff",
+                        "surface-container-highest": "#e0e0fc",
+                        "tertiary-fixed": "#ffdea5",
+                        "on-tertiary-fixed": "#261900",
+                        "inverse-on-surface": "#f1efff",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#d7e2ff",
+                        "surface-container-high": "#e6e6ff",
+                        "surface-variant": "#e0e0fc",
+                        "inverse-surface": "#2d2f44",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#ddddf9",
+                        "secondary": "#5b5d74",
+                        "surface-dim": "#d7d8f4",
+                        "tertiary": "#190f00",
+                        "secondary-fixed": "#e0e0fc",
+                        "on-primary-container": "#828da7",
+                        "on-primary-fixed-variant": "#3c475d",
+                        "on-surface-variant": "#45474d",
+                        "background": "#fbf8ff",
+                        "surface-container-low": "#f4f2ff",
+                        "surface": "#fbf8ff",
+                        "primary-container": "#1b263b",
+                        "tertiary-container": "#342300",
+                        "primary": "#051125",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#181a2e"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .blueprint-grid {
+            background-image: radial-gradient(circle, #e0e0fc 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface">
+<!-- Top Navigation -->
+<nav class="fixed top-0 w-full flex justify-between items-center px-8 py-4 max-w-full bg-white/80 backdrop-blur-md z-50 border-b border-slate-200/20">
+<div class="flex items-center gap-8">
+<span class="font-serif italic text-xl font-bold text-slate-900">EastMidlandsTrade</span>
+<div class="hidden md:flex gap-6">
+<a class="font-sans Manrope text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors duration-200" href="#">Find a Trade</a>
+<a class="font-sans Manrope text-sm font-medium text-slate-900 border-b-2 border-slate-900 pb-1" href="#">For Suppliers</a>
+<a class="font-sans Manrope text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors duration-200" href="#">How it Works</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-on-primary px-4 py-2 text-sm font-semibold rounded-sm hover:opacity-90 transition-opacity">Supplier Sign-up</button>
+</div>
+</nav>
+<main class="pt-24 pb-12 px-8 max-w-7xl mx-auto">
+<!-- Dashboard Header -->
+<header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<h1 class="font-headline text-5xl tracking-tight text-primary mb-2">Supplier Dashboard</h1>
+<p class="text-secondary font-body max-w-2xl">Manage your architectural service portfolio, lead generation, and regional coverage from a single blueprint.</p>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-low p-4 rounded-lg">
+<div class="flex flex-col">
+<span class="text-xs font-label text-secondary uppercase tracking-widest">Lead Generation</span>
+<span class="font-headline text-lg text-primary">Status: Active</span>
+</div>
+<button aria-checked="true" class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-tertiary-fixed-dim" role="switch">
+<span aria-hidden="true" class="pointer-events-none inline-block h-5 w-5 translate-x-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+</button>
+</div>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+<!-- Left Column: Metrics & Leads -->
+<div class="lg:col-span-8 space-y-8">
+<!-- Lead Activity Chart Placeholder -->
+<section class="bg-surface-container-lowest p-8 rounded shadow-sm relative overflow-hidden">
+<div class="flex justify-between items-center mb-8">
+<h2 class="font-headline text-2xl text-primary">Lead Activity</h2>
+<span class="font-label text-xs uppercase tracking-widest text-secondary">Past 30 Days</span>
+</div>
+<div class="h-48 flex items-end gap-2 justify-between">
+<!-- Simple visual bar chart using heights -->
+<div class="w-full bg-surface-container-low rounded-t h-[40%]"></div>
+<div class="w-full bg-surface-container-low rounded-t h-[65%]"></div>
+<div class="w-full bg-primary rounded-t h-[90%] relative group">
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">Peak: 24</div>
+</div>
+<div class="w-full bg-surface-container-low rounded-t h-[55%]"></div>
+<div class="w-full bg-surface-container-low rounded-t h-[70%]"></div>
+<div class="w-full bg-tertiary-fixed-dim rounded-t h-[85%]"></div>
+<div class="w-full bg-surface-container-low rounded-t h-[45%]"></div>
+<div class="w-full bg-surface-container-low rounded-t h-[30%]"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-label text-secondary uppercase">
+<span>Week 1</span>
+<span>Week 2</span>
+<span>Week 3</span>
+<span>Week 4</span>
+</div>
+</section>
+<!-- New Leads List -->
+<section>
+<div class="flex items-center justify-between mb-6">
+<h2 class="font-headline text-2xl text-primary">New Leads</h2>
+<a class="text-sm font-label text-primary hover:underline decoration-tertiary-fixed-dim underline-offset-4" href="#">View All Archive</a>
+</div>
+<div class="space-y-6">
+<!-- Lead Card 1 -->
+<div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<span class="font-headline text-xl">Edward Thompson</span>
+<span class="bg-secondary-container/40 px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-tighter">New Lead</span>
+</div>
+<p class="text-sm text-secondary font-body">Full structural survey for Victorian terrace renovation.</p>
+<div class="flex items-center gap-4 text-xs font-label text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> NG1 2AS</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 2 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="border border-outline-variant/20 px-4 py-2 text-xs font-bold uppercase tracking-wider text-primary hover:bg-surface-container transition-colors">Contact Details</button>
+<button class="bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90">Accept Lead</button>
+</div>
+</div>
+<!-- Lead Card 2 -->
+<div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6">
+<div class="space-y-2">
+<div class="flex items-center gap-3">
+<span class="font-headline text-xl">Sarah Millican</span>
+<span class="bg-tertiary-fixed/40 px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-tighter">High Value</span>
+</div>
+<p class="text-sm text-secondary font-body">Energy efficiency assessment &amp; loft insulation report.</p>
+<div class="flex items-center gap-4 text-xs font-label text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> DE22 3FT</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> 5 hours ago</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="border border-outline-variant/20 px-4 py-2 text-xs font-bold uppercase tracking-wider text-primary hover:bg-surface-container transition-colors">Contact Details</button>
+<button class="bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90">Accept Lead</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Settings & Controls -->
+<div class="lg:col-span-4 space-y-8">
+<!-- Postcode Coverage -->
+<section class="bg-surface-container-low p-8 rounded">
+<h3 class="font-headline text-xl text-primary mb-4">Postcode Coverage</h3>
+<p class="text-xs text-secondary mb-6 leading-relaxed">Define the regional boundaries for your service inquiries. Click to remove or add new sectors.</p>
+<div class="flex flex-wrap gap-2 mb-6">
+<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20">
+                            NG (Nottingham) <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20">
+                            DE (Derby) <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</span>
+<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20 text-secondary italic">
+                            LE (Leicester) <span class="material-symbols-outlined text-[14px] cursor-pointer">add</span>
+</span>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" placeholder="Add postcode prefix..." type="text"/>
+<span class="absolute right-3 top-3 material-symbols-outlined text-secondary text-lg">search</span>
+</div>
+</section>
+<!-- Pricing Control -->
+<section class="bg-surface-container-low p-8 rounded">
+<h3 class="font-headline text-xl text-primary mb-4">Pricing Controls</h3>
+<p class="text-xs text-secondary mb-6 leading-relaxed">Set your baseline rates for the East Midlands marketplace. These are shown as 'Starting From' prices.</p>
+<div class="space-y-6">
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Initial Consultation</label>
+<div class="flex items-center gap-3">
+<span class="font-headline text-lg text-primary">£</span>
+<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="150"/>
+</div>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Technical Site Survey</label>
+<div class="flex items-center gap-3">
+<span class="font-headline text-lg text-primary">£</span>
+<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="450"/>
+</div>
+</div>
+<div>
+<label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Full Project Design (Daily)</label>
+<div class="flex items-center gap-3">
+<span class="font-headline text-lg text-primary">£</span>
+<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="600"/>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 bg-primary text-on-primary py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90">Save Blueprint</button>
+</section>
+<!-- Account Health Card -->
+<div class="bg-primary text-on-primary p-8 rounded relative overflow-hidden">
+<div class="relative z-10">
+<h4 class="font-headline text-xl mb-2">Account Excellence</h4>
+<div class="flex items-baseline gap-2 mb-4">
+<span class="text-4xl font-headline italic">4.9</span>
+<span class="text-xs font-label uppercase text-on-primary/60">Average Rating</span>
+</div>
+<div class="w-full bg-white/20 h-1 mb-2">
+<div class="bg-tertiary-fixed-dim h-full w-[95%]"></div>
+</div>
+<p class="text-[10px] text-on-primary/60">Top 5% of suppliers in Nottinghamshire</p>
+</div>
+<!-- Decorative architectural icon background -->
+<span class="material-symbols-outlined absolute -bottom-4 -right-4 text-9xl text-white/5" style="font-variation-settings: 'wght' 100">architecture</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 border-t border-slate-200/40">
+<div class="w-full py-12 px-8 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
+<div class="col-span-2">
+<span class="font-serif text-lg font-bold text-slate-900 mb-4 block">East Midlands Trade Comparison</span>
+<p class="font-sans text-xs text-slate-500 max-w-sm normal-case leading-relaxed">Professional directory of accredited tradespeople serving the heart of England. Excellence in craftsmanship, transparency in pricing.</p>
+</div>
+<div class="space-y-3">
+<span class="font-sans text-xs tracking-wide uppercase font-bold text-slate-900 block mb-4">Trades</span>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Surveyors</a>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Architects</a>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Energy Assessors</a>
+</div>
+<div class="space-y-3">
+<span class="font-sans text-xs tracking-wide uppercase font-bold text-slate-900 block mb-4">Legal</span>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Terms of Service</a>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Privacy Policy</a>
+<a class="block font-sans text-xs tracking-wide uppercase text-slate-500 hover:underline decoration-slate-300 underline-offset-4" href="#">Supplier Registration</a>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-8 pb-8">
+<p class="font-sans text-[10px] tracking-wide uppercase text-slate-400">© 2024 East Midlands Trade Comparison. Registered in England &amp; Wales.</p>
+</div>
+</footer>
+</body></html>
