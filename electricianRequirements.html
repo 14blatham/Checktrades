@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Electrical Project Details | Guild &amp; Gable</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&amp;family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "outline": "#75777d",
+                        "tertiary": "#190f00",
+                        "primary-container": "#1b263b",
+                        "inverse-surface": "#2d2f44",
+                        "primary-fixed": "#d7e2ff",
+                        "secondary-fixed-dim": "#c4c4df",
+                        "on-primary-fixed-variant": "#3c475d",
+                        "surface-container-highest": "#e0e0fc",
+                        "on-surface-variant": "#45474d",
+                        "error": "#ba1a1a",
+                        "secondary": "#5b5d74",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "tertiary-container": "#342300",
+                        "on-surface": "#181a2e",
+                        "inverse-primary": "#bbc6e2",
+                        "on-secondary-fixed": "#181a2e",
+                        "surface-dim": "#d7d8f4",
+                        "on-background": "#181a2e",
+                        "surface-bright": "#fbf8ff",
+                        "background": "#fbf8ff",
+                        "primary-fixed-dim": "#bbc6e2",
+                        "primary": "#051125",
+                        "on-tertiary-container": "#ab8844",
+                        "surface-container-low": "#f4f2ff",
+                        "surface-container-high": "#e6e6ff",
+                        "surface": "#fbf8ff",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#5d4201",
+                        "tertiary-fixed-dim": "#e9c176",
+                        "surface-variant": "#e0e0fc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#101b30",
+                        "on-secondary-container": "#5f6178",
+                        "secondary-container": "#ddddf9",
+                        "error-container": "#ffdad6",
+                        "surface-tint": "#545e76",
+                        "tertiary-fixed": "#ffdea5",
+                        "on-secondary-fixed-variant": "#43455b",
+                        "outline-variant": "#c5c6cd",
+                        "inverse-on-surface": "#f1efff",
+                        "surface-container": "#edecff",
+                        "on-primary-container": "#828da7",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed": "#e0e0fc",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-fixed": "#261900"
+                    },
+                    fontFamily: {
+                        "headline": ["Newsreader", "serif"],
+                        "body": ["Manrope", "sans-serif"],
+                        "label": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #fbf8ff;
+            color: #181a2e;
+        }
+        h1, h2, h3 {
+            font-family: 'Newsreader', serif;
+        }
+        .architectural-gradient {
+            background: linear-gradient(135deg, #051125 0%, #1B263B 100%);
+        }
+        .ambient-shadow {
+            box-shadow: 0 24px 40px rgba(24, 26, 46, 0.06);
+        }
+        .ghost-border {
+            border: 1px solid rgba(197, 198, 205, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<!-- Top Navigation Bar -->
+<nav class="fixed top-0 w-full z-50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/20 dark:border-slate-800/20 shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
+<div class="text-xl font-serif tracking-tight text-slate-900 dark:text-slate-100">
+                Guild &amp; Gable
+            </div>
+<div class="hidden md:flex space-x-8 items-center">
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors text-sm font-label" href="#">Find Trade</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors text-sm font-label" href="#">How it Works</a>
+<a class="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors text-sm font-label" href="#">Pro Membership</a>
+<button class="bg-primary text-on-primary px-6 py-2.5 text-sm font-semibold tracking-wide uppercase shadow-sm hover:opacity-90 transition-all">
+                    Get Quote
+                </button>
+</div>
+<div class="md:hidden">
+<span class="material-symbols-outlined text-primary" data-icon="menu">menu</span>
+</div>
+</div>
+</nav>
+<main class="pt-24 pb-20">
+<!-- Hero Section -->
+<section class="max-w-7xl mx-auto px-6 mb-16">
+<div class="flex flex-col md:flex-row gap-12 items-end">
+<div class="md:w-2/3">
+<span class="text-xs tracking-[0.2em] uppercase font-label text-secondary mb-4 block">Certified Excellence</span>
+<h1 class="text-5xl md:text-7xl font-headline tracking-tight text-primary leading-tight">
+                        Electrical Project <br/><i class="font-serif italic">Details</i>
+</h1>
+</div>
+<div class="md:w-1/3 mb-2">
+<p class="text-body text-secondary text-lg leading-relaxed">
+                        Precision-engineered solutions for high-end residential and commercial developments. Verified NICEIC expertise.
+                    </p>
+</div>
+</div>
+</section>
+<!-- Main Content Grid -->
+<section class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
+<!-- Form Section -->
+<div class="lg:col-span-7 bg-surface-container-lowest p-8 md:p-12 ambient-shadow rounded-lg border border-outline-variant/10">
+<h2 class="text-3xl font-headline text-primary mb-8">Request a Specification</h2>
+<form class="space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-label text-secondary">Full Name</label>
+<input class="w-full bg-surface-container-low border-0 border-b border-transparent focus:ring-0 focus:bg-surface-container-highest focus:border-primary transition-all px-0 py-3 text-on-surface placeholder:text-outline-variant" placeholder="e.g. Alistair Gable" type="text"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-label text-secondary">Contact Number</label>
+<input class="w-full bg-surface-container-low border-0 border-b border-transparent focus:ring-0 focus:bg-surface-container-highest focus:border-primary transition-all px-0 py-3 text-on-surface placeholder:text-outline-variant" placeholder="+44 0000 000 000" type="tel"/>
+</div>
+</div>
+<div class="space-y-4">
+<label class="text-xs uppercase tracking-widest font-label text-secondary">Service Required</label>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<label class="cursor-pointer group">
+<input class="hidden peer" name="service" type="radio"/>
+<div class="p-4 bg-surface-container-low peer-checked:bg-primary peer-checked:text-on-primary text-center transition-all flex flex-col items-center gap-2">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+<span class="text-[10px] uppercase font-label">Rewiring</span>
+</div>
+</label>
+<label class="cursor-pointer group">
+<input class="hidden peer" name="service" type="radio"/>
+<div class="p-4 bg-surface-container-low peer-checked:bg-primary peer-checked:text-on-primary text-center transition-all flex flex-col items-center gap-2">
+<span class="material-symbols-outlined" data-icon="solar_power">solar_power</span>
+<span class="text-[10px] uppercase font-label">Solar PV</span>
+</div>
+</label>
+<label class="cursor-pointer group">
+<input class="hidden peer" name="service" type="radio"/>
+<div class="p-4 bg-surface-container-low peer-checked:bg-primary peer-checked:text-on-primary text-center transition-all flex flex-col items-center gap-2">
+<span class="material-symbols-outlined" data-icon="ev_station">ev_station</span>
+<span class="text-[10px] uppercase font-label">EV Charging</span>
+</div>
+</label>
+<label class="cursor-pointer group">
+<input class="hidden peer" name="service" type="radio"/>
+<div class="p-4 bg-surface-container-low peer-checked:bg-primary peer-checked:text-on-primary text-center transition-all flex flex-col items-center gap-2">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="text-[10px] uppercase font-label">Repairs</span>
+</div>
+</label>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-xs uppercase tracking-widest font-label text-secondary">Project Scope &amp; Notes</label>
+<textarea class="w-full bg-surface-container-low border-0 border-b border-transparent focus:ring-0 focus:bg-surface-container-highest focus:border-primary transition-all px-0 py-3 text-on-surface placeholder:text-outline-variant" placeholder="Describe the architectural requirements of your project..." rows="4"></textarea>
+</div>
+<div class="flex items-center gap-4 pt-4">
+<button class="bg-primary text-on-primary px-10 py-4 text-sm font-bold tracking-widest uppercase hover:opacity-90 transition-all" type="submit">
+                            Submit Inquiry
+                        </button>
+<span class="text-[10px] font-label text-outline uppercase tracking-tight max-w-[150px]">
+                            Average response time: <br/><span class="text-on-surface">2 working hours</span>
+</span>
+</div>
+</form>
+</div>
+<!-- Side Content / Bento Info -->
+<div class="lg:col-span-5 space-y-8">
+<!-- Professional Status Card -->
+<div class="bg-primary text-on-primary p-8 rounded-lg relative overflow-hidden architectural-gradient">
+<div class="relative z-10">
+<h3 class="text-2xl font-headline mb-4">Certified Authority</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="verified" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<p class="font-label text-sm font-bold">NICEIC Platinum Approved</p>
+<p class="text-xs text-on-primary/60">Registration: GC/104294</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-tertiary-fixed/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-tertiary-fixed" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+</div>
+<div>
+<p class="font-label text-sm font-bold">NAPIT Registered</p>
+<p class="text-xs text-on-primary/60">Full Competent Person Scheme</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Decorative Graphic -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 opacity-10 border-[1px] border-white rounded-full"></div>
+</div>
+<!-- Featured Work Card -->
+<div class="bg-surface-container-low p-6 space-y-4">
+<div class="aspect-video bg-slate-200 overflow-hidden rounded-sm grayscale hover:grayscale-0 transition-all duration-700">
+<img alt="Electrical Work" class="w-full h-full object-cover" data-alt="Close-up of a perfectly wired electrical consumer unit with clean cable management and industrial aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuwsazj6Ejh0Vmrwi9uQ466NgRciSGQfDm6ddbAU1PqZ8WFQFGb8KeQl7PiHskTsdJiptKmMgrpcV7IR1AmW3WxpcRbLMwbevGAbDqhhS7nfQZDt8ItRgo-0Exi9H21AEFZ1Fga-mkznmPPi94VV67DofN7VcWOlW-BWDX2h3wSKmvLykAK518bKTWs_tmQMEwcH7lRyL37mB6lghNC2jCai49vzzpk5KGVjxMAx67yW0moY-_BuQELun82tYe6GCjo9ezD8oTxgrw"/>
+</div>
+<div>
+<h4 class="text-xl font-headline text-primary">Portfolio: Highbury Estates</h4>
+<p class="text-xs font-label text-secondary mt-1">Full structural rewiring and integrated smart home lighting system.</p>
+</div>
+</div>
+<!-- Support Contact -->
+<div class="p-8 border border-outline-variant/30 rounded-lg">
+<h3 class="text-xl font-headline text-primary mb-6">Direct Consultation</h3>
+<div class="space-y-4">
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-4">
+<span class="text-xs font-label text-secondary uppercase tracking-widest">Office</span>
+<span class="font-headline text-lg">+44 115 824 1000</span>
+</div>
+<div class="flex justify-between items-center border-b border-outline-variant/10 pb-4">
+<span class="text-xs font-label text-secondary uppercase tracking-widest">Inquiries</span>
+<span class="font-label text-sm">projects@guildgable.com</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-xs font-label text-secondary uppercase tracking-widest">HQ</span>
+<span class="font-label text-sm text-right">Lace Market, Nottingham, UK</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Technical Specification Grid -->
+<section class="max-w-7xl mx-auto px-6 mt-24">
+<h2 class="text-3xl font-headline text-primary mb-12 text-center">Architectural Standards</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+<div class="space-y-4 text-center">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim" data-icon="architecture">architecture</span>
+<h4 class="text-xl font-headline">Technical Design</h4>
+<p class="text-sm text-secondary leading-relaxed">CAD-integrated electrical layouts for seamless coordination with architects and builders.</p>
+</div>
+<div class="space-y-4 text-center">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim" data-icon="energy_savings_leaf">energy_savings_leaf</span>
+<h4 class="text-xl font-headline">Sustainability First</h4>
+<p class="text-sm text-secondary leading-relaxed">Grade-A energy efficiency planning, specializing in integrated solar PV and storage.</p>
+</div>
+<div class="space-y-4 text-center">
+<span class="material-symbols-outlined text-4xl text-tertiary-fixed-dim" data-icon="gavel">gavel</span>
+<h4 class="text-xl font-headline">Full Compliance</h4>
+<p class="text-sm text-secondary leading-relaxed">Full Part P notification and certification for every project, regardless of scale.</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-900 dark:bg-black w-full py-12 px-8">
+<div class="max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="col-span-1 md:col-span-1">
+<div class="text-lg font-serif text-white mb-4">Guild &amp; Gable</div>
+<p class="text-slate-400 text-xs font-body leading-relaxed">
+                        Setting the architectural standard for UK trades through precision, heritage, and modern innovation.
+                    </p>
+</div>
+<div class="col-span-1">
+<h5 class="text-xs tracking-widest uppercase font-label text-amber-200 mb-6">Expertise</h5>
+<ul class="space-y-3">
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label" href="#">Architects</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label" href="#">Structural Engineers</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label" href="#">Surveyors</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h5 class="text-xs tracking-widest uppercase font-label text-amber-200 mb-6">Guild</h5>
+<ul class="space-y-3">
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label text-amber-200" href="#">Electricians</a></li>
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label" href="#">Energy Assessors</a></li>
+</ul>
+</div>
+<div class="col-span-1">
+<h5 class="text-xs tracking-widest uppercase font-label text-amber-200 mb-6">Legal</h5>
+<ul class="space-y-3">
+<li><a class="text-slate-400 hover:text-white transition-colors text-xs font-label" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="bg-slate-800 h-px w-full my-8"></div>
+<div class="flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-slate-400 text-[10px] tracking-widest uppercase font-label">© 2024 Guild &amp; Gable. The Architectural Authority.</p>
+<div class="flex gap-6">
+<span class="material-symbols-outlined text-slate-500 hover:text-white cursor-pointer transition-colors" data-icon="share">share</span>
+<span class="material-symbols-outlined text-slate-500 hover:text-white cursor-pointer transition-colors" data-icon="mail">mail</span>
+</div>
+</div>
+</div>
+</footer>
+</body></html>
