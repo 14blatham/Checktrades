@@ -151,11 +151,11 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
 <div class="space-y-1 group">
 <label class="font-label text-xs uppercase tracking-widest text-secondary group-focus-within:text-primary transition-colors">Postcode of Property</label>
-<input class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="e.g. NG1 1AA" type="text"/>
+<input id="svc-postcode" class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="e.g. NG1 1AA" type="text"/>
 </div>
 <div class="space-y-1 group">
 <label class="font-label text-xs uppercase tracking-widest text-secondary group-focus-within:text-primary transition-colors">Property Type</label>
-<select class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg appearance-none">
+<select id="svc-property-type" class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg appearance-none">
 <option>Detached House</option>
 <option>Semi-Detached</option>
 <option>Terraced</option>
@@ -185,16 +185,16 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
 <div class="space-y-1 group">
 <label class="font-label text-xs uppercase tracking-widest text-secondary group-focus-within:text-primary transition-colors">Full Name</label>
-<input class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="Enter your name" type="text"/>
+<input id="svc-name" class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="Enter your name" type="text"/>
 </div>
 <div class="space-y-1 group">
 <label class="font-label text-xs uppercase tracking-widest text-secondary group-focus-within:text-primary transition-colors">Phone Number</label>
-<input class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="07123 456789" type="tel"/>
+<input id="svc-phone" class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="07123 456789" type="tel"/>
 </div>
 </div>
 <div class="space-y-1 group">
 <label class="font-label text-xs uppercase tracking-widest text-secondary group-focus-within:text-primary transition-colors">Email Address</label>
-<input class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="email@example.com" type="email"/>
+<input id="svc-email" class="w-full bg-surface-container-low border-none border-b border-transparent focus:ring-0 focus:border-primary focus:bg-surface-container-highest transition-all py-3 px-0 font-body text-lg" placeholder="email@example.com" type="email"/>
 </div>
 </div>
 </section>
@@ -277,5 +277,83 @@
                 </p>
 </div>
 </div>
+<script type="module">
+import { supabase, getUser } from './supabase-client.js';
+
+let selectedBedrooms = 3;
+let selectedSurveyType = 'RICS Home Survey Level 2';
+
+// Bedroom selector
+const bedroomBtns = document.querySelectorAll('.flex.gap-2.py-2 button');
+bedroomBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    bedroomBtns.forEach(b => { b.className = 'w-10 h-10 border border-outline-variant/30 hover:bg-primary hover:text-on-primary transition-colors'; });
+    btn.className = 'w-10 h-10 bg-primary text-on-primary';
+    selectedBedrooms = btn.textContent === '5+' ? 5 : parseInt(btn.textContent);
+  });
+});
+
+// Survey type radio
+document.querySelectorAll('input[name="survey_type"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    selectedSurveyType = radio.closest('label').querySelector('h3').textContent;
+  });
+});
+
+// Form submit
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  const postcode = document.getElementById('svc-postcode').value;
+  const name = document.getElementById('svc-name').value;
+  const email = document.getElementById('svc-email').value;
+
+  if (!postcode || !name || !email) {
+    alert('Please fill in all required fields.');
+    btn.textContent = 'Continue to Quotes';
+    btn.disabled = false;
+    return;
+  }
+
+  const { user } = await getUser();
+
+  const { data, error } = await supabase.from('projects').insert({
+    homeowner_id: user?.id || null,
+    trade_type: 'Surveyor',
+    survey_type: selectedSurveyType,
+    property_postcode: postcode,
+    property_type: document.getElementById('svc-property-type').value,
+    bedrooms: selectedBedrooms,
+    contact_name: name,
+    contact_phone: document.getElementById('svc-phone').value,
+    contact_email: email,
+    status: 'open'
+  }).select().single();
+
+  if (error) {
+    alert('Error submitting project: ' + error.message);
+    btn.textContent = 'Continue to Quotes';
+    btn.disabled = false;
+    return;
+  }
+
+  // Auto-create leads for matching active suppliers
+  const { data: suppliers } = await supabase
+    .from('suppliers')
+    .select('id')
+    .eq('trade_type', 'Surveyor')
+    .eq('is_active', true);
+
+  if (suppliers && suppliers.length > 0) {
+    const leadInserts = suppliers.map(s => ({ project_id: data.id, supplier_id: s.id, status: 'new' }));
+    await supabase.from('leads').insert(leadInserts);
+  }
+
+  window.location.href = 'quotes.html?project=' + data.id;
+});
+</script>
 </footer>
 </body></html>

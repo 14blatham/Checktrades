@@ -234,4 +234,119 @@
 </footer>
 </div>
 </main>
+<script type="module">
+import { signIn, signUp, signInWithGoogle, signInWithApple, resetPassword, getUser } from './supabase-client.js';
+
+// Redirect if already logged in
+const { user } = await getUser();
+if (user) window.location.href = 'dashboard.html';
+
+// Sign In
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Signing in...';
+  btn.disabled = true;
+
+  const { data, error } = await signIn(email, password);
+  if (error) {
+    alert(error.message);
+    btn.innerHTML = 'Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+    btn.disabled = false;
+    return;
+  }
+  window.location.href = 'dashboard.html';
+});
+
+// Forgot Password
+document.querySelector('a[href="#"]').addEventListener('click', async (e) => {
+  if (e.target.textContent.trim() !== 'Forgot Password?') return;
+  e.preventDefault();
+  const email = document.getElementById('email').value;
+  if (!email) { alert('Please enter your email address first.'); return; }
+  const { error } = await resetPassword(email);
+  if (error) alert(error.message);
+  else alert('Password reset link sent! Check your email.');
+});
+
+// Google OAuth
+document.querySelectorAll('button[type="button"]').forEach(btn => {
+  const label = btn.textContent.trim();
+  if (label.includes('Google')) {
+    btn.addEventListener('click', async () => {
+      const { error } = await signInWithGoogle();
+      if (error) alert(error.message);
+    });
+  }
+  if (label.includes('Apple')) {
+    btn.addEventListener('click', async () => {
+      const { error } = await signInWithApple();
+      if (error) alert(error.message);
+    });
+  }
+});
+
+// "Join the Guild" → switch to sign-up mode
+const joinLink = document.querySelector('a[href="#"]');
+const allLinks = document.querySelectorAll('a[href="#"]');
+const joinGuild = [...allLinks].find(a => a.textContent.trim() === 'Join the Guild');
+if (joinGuild) {
+  joinGuild.addEventListener('click', (e) => {
+    e.preventDefault();
+    const heading = document.querySelector('h3');
+    const submitBtn = document.querySelector('button[type="submit"]');
+    const isSignUp = heading.textContent === 'Welcome Back';
+
+    if (isSignUp) {
+      heading.textContent = 'Create Account';
+      submitBtn.innerHTML = 'Create Account <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+      joinGuild.textContent = 'Sign in instead';
+      // Switch form to sign-up mode
+      document.querySelector('form').dataset.mode = 'signup';
+    } else {
+      heading.textContent = 'Welcome Back';
+      submitBtn.innerHTML = 'Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+      joinGuild.textContent = 'Join the Guild';
+      document.querySelector('form').dataset.mode = 'signin';
+    }
+  });
+
+  // Override form submit to handle sign-up
+  const form = document.querySelector('form');
+  const originalHandler = form.onsubmit;
+  form.addEventListener('submit', async (e) => {
+    if (form.dataset.mode !== 'signup') return; // let the sign-in handler run
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const btn = form.querySelector('button[type="submit"]');
+    btn.textContent = 'Creating account...';
+    btn.disabled = true;
+
+    const { data, error } = await signUp(email, password, { role: 'homeowner' });
+    if (error) {
+      alert(error.message);
+      btn.innerHTML = 'Create Account <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+      btn.disabled = false;
+      return;
+    }
+    window.location.href = 'emailverificationlandingpage.html';
+  }, true);
+}
+
+// Password visibility toggle
+const visIcon = document.querySelector('.material-symbols-outlined[style]') ||
+  [...document.querySelectorAll('.material-symbols-outlined')].find(el => el.textContent.trim() === 'visibility');
+if (visIcon) {
+  visIcon.addEventListener('click', () => {
+    const pw = document.getElementById('password');
+    const isHidden = pw.type === 'password';
+    pw.type = isHidden ? 'text' : 'password';
+    visIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+  });
+}
+</script>
 </body></html>

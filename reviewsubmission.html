@@ -228,5 +228,109 @@
             © 2024 Guild &amp; Gable
         </div>
 </div>
+<script type="module">
+import { supabase, getUser } from './supabase-client.js';
+
+let overallRating = 4;
+let qualityRating = 5;
+let communicationRating = 4;
+let valueRating = 3;
+
+// Overall star rating interaction
+const overallStars = document.querySelectorAll('.text-center.space-y-4 button');
+overallStars.forEach((btn, idx) => {
+  btn.addEventListener('click', () => {
+    overallRating = idx + 1;
+    overallStars.forEach((b, j) => {
+      const star = b.querySelector('.material-symbols-outlined');
+      star.style.fontVariationSettings = j <= idx ? "'FILL' 1" : "'FILL' 0";
+      star.classList.toggle('text-tertiary-fixed-dim', j <= idx);
+      star.classList.toggle('text-outline-variant/30', j > idx);
+    });
+  });
+});
+
+// Core metric rows — make stars clickable
+const metricRows = document.querySelectorAll('.grid.grid-cols-1.gap-4 > div');
+const ratingRefs = [
+  { get: () => qualityRating, set: (v) => qualityRating = v },
+  { get: () => communicationRating, set: (v) => communicationRating = v },
+  { get: () => valueRating, set: (v) => valueRating = v }
+];
+
+metricRows.forEach((row, rIdx) => {
+  const stars = row.querySelectorAll('.material-symbols-outlined');
+  stars.forEach((star, sIdx) => {
+    star.style.cursor = 'pointer';
+    star.addEventListener('click', () => {
+      ratingRefs[rIdx].set(sIdx + 1);
+      stars.forEach((s, j) => {
+        s.style.fontVariationSettings = j <= sIdx ? "'FILL' 1" : "'FILL' 0";
+        s.classList.toggle('text-outline-variant/30', j > sIdx);
+      });
+    });
+  });
+});
+
+// Submit review
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('button[type="submit"]');
+  btn.textContent = 'Publishing...';
+  btn.disabled = true;
+
+  const { user } = await getUser();
+  if (!user) {
+    alert('Please sign in to submit a review.');
+    window.location.href = 'loginpage.html';
+    return;
+  }
+
+  const narrative = document.querySelector('textarea').value;
+  const verified = document.querySelector('input[type="checkbox"]').checked;
+
+  // Get supplier_id from URL params or use a placeholder
+  const params = new URLSearchParams(window.location.search);
+  const supplierId = params.get('supplier');
+
+  if (!supplierId) {
+    alert('No supplier specified. Please navigate here from a completed project.');
+    btn.textContent = 'Publish Review';
+    btn.disabled = false;
+    return;
+  }
+
+  const { error } = await supabase.from('reviews').insert({
+    supplier_id: supplierId,
+    reviewer_id: user.id,
+    project_id: params.get('project') || null,
+    overall_rating: overallRating,
+    quality_rating: qualityRating,
+    communication_rating: communicationRating,
+    value_rating: valueRating,
+    narrative: narrative,
+    is_verified: verified
+  });
+
+  if (error) {
+    alert('Error submitting review: ' + error.message);
+    btn.textContent = 'Publish Review';
+    btn.disabled = false;
+    return;
+  }
+
+  btn.textContent = 'Published!';
+  setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+});
+
+// Save draft
+document.querySelector('button[type="button"]:last-of-type')?.addEventListener('click', () => {
+  const narrative = document.querySelector('textarea').value;
+  localStorage.setItem('review_draft', JSON.stringify({
+    overallRating, qualityRating, communicationRating, valueRating, narrative
+  }));
+  alert('Draft saved locally.');
+});
+</script>
 </footer>
 </body></html>

@@ -154,4 +154,61 @@
 <div class="absolute top-0 right-0 w-1/3 h-1/2 bg-surface-container-low opacity-20 blur-[120px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
 <div class="absolute bottom-0 left-0 w-1/4 h-1/2 bg-surface-container-low opacity-30 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
 </div>
+<script type="module">
+import { supabase, getUser, signOut } from './supabase-client.js';
+
+// Handle the auth callback (Supabase redirects here with tokens in the URL hash)
+const hashParams = new URLSearchParams(window.location.hash.substring(1));
+const accessToken = hashParams.get('access_token');
+const refreshToken = hashParams.get('refresh_token');
+
+if (accessToken && refreshToken) {
+  const { data, error } = await supabase.auth.setSession({
+    access_token: accessToken,
+    refresh_token: refreshToken
+  });
+  if (!error) {
+    // Clear hash and show success
+    window.history.replaceState(null, '', window.location.pathname);
+    document.querySelector('h1').textContent = 'Email Verified!';
+    document.querySelector('main p').textContent = 'Your account has been verified successfully. You can now access the full platform.';
+    const icon = document.querySelector('[data-icon="mark_email_read"]');
+    if (icon) icon.textContent = 'check_circle';
+
+    // Redirect after 2 seconds
+    const { user } = await getUser();
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    setTimeout(() => {
+      window.location.href = profile?.role === 'supplier' ? 'dashboard.html' : 'index.html';
+    }, 2000);
+  }
+}
+
+// Resend verification email
+const resendBtn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Resend'));
+if (resendBtn) {
+  resendBtn.addEventListener('click', async () => {
+    const { user } = await getUser();
+    if (user?.email) {
+      const { error } = await supabase.auth.resend({ type: 'signup', email: user.email });
+      resendBtn.textContent = error ? 'Error — try again' : 'Email Sent!';
+      setTimeout(() => { resendBtn.textContent = 'Resend Verification Email'; }, 3000);
+    } else {
+      alert('Please sign in first to resend the verification email.');
+    }
+  });
+}
+
+// Open email client
+const openBtn = [...document.querySelectorAll('button')].find(b => b.textContent.includes('Open Email'));
+if (openBtn) {
+  openBtn.addEventListener('click', () => { window.open('https://mail.google.com', '_blank'); });
+}
+
+// Back to login
+const backLink = document.querySelector('a[href="#"]');
+if (backLink && backLink.textContent.includes('Back to Login')) {
+  backLink.href = 'loginpage.html';
+}
+</script>
 </body></html>

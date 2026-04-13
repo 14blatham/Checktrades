@@ -149,7 +149,7 @@
 <h2 class="font-headline text-2xl text-primary">New Leads</h2>
 <a class="text-sm font-label text-primary hover:underline decoration-tertiary-fixed-dim underline-offset-4" href="#">View All Archive</a>
 </div>
-<div class="space-y-6">
+<div id="leads-container" class="space-y-6">
 <!-- Lead Card 1 -->
 <div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
 <div class="space-y-2">
@@ -220,32 +220,32 @@
 <label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Initial Consultation</label>
 <div class="flex items-center gap-3">
 <span class="font-headline text-lg text-primary">£</span>
-<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="150"/>
+<input id="price-consultation" class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="150"/>
 </div>
 </div>
 <div>
 <label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Technical Site Survey</label>
 <div class="flex items-center gap-3">
 <span class="font-headline text-lg text-primary">£</span>
-<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="450"/>
+<input id="price-survey" class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="450"/>
 </div>
 </div>
 <div>
 <label class="block text-[10px] font-label uppercase tracking-widest text-secondary mb-2">Full Project Design (Daily)</label>
 <div class="flex items-center gap-3">
 <span class="font-headline text-lg text-primary">£</span>
-<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="600"/>
+<input id="price-project" class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" type="number" value="600"/>
 </div>
 </div>
 </div>
-<button class="w-full mt-8 bg-primary text-on-primary py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90">Save Blueprint</button>
+<button id="save-pricing" class="w-full mt-8 bg-primary text-on-primary py-3 text-xs font-bold uppercase tracking-widest hover:opacity-90">Save Blueprint</button>
 </section>
 <!-- Account Health Card -->
 <div class="bg-primary text-on-primary p-8 rounded relative overflow-hidden">
 <div class="relative z-10">
 <h4 class="font-headline text-xl mb-2">Account Excellence</h4>
 <div class="flex items-baseline gap-2 mb-4">
-<span class="text-4xl font-headline italic">4.9</span>
+<span id="rating-value" class="text-4xl font-headline italic">4.9</span>
 <span class="text-xs font-label uppercase text-on-primary/60">Average Rating</span>
 </div>
 <div class="w-full bg-white/20 h-1 mb-2">
@@ -282,5 +282,106 @@
 <div class="max-w-7xl mx-auto px-8 pb-8">
 <p class="font-sans text-[10px] tracking-wide uppercase text-slate-400">© 2024 East Midlands Trade Comparison. Registered in England &amp; Wales.</p>
 </div>
+<script type="module">
+import { supabase, getUser, signOut } from './supabase-client.js';
+
+// ── Auth guard ──
+const { user } = await getUser();
+if (!user) { window.location.href = 'loginpage.html'; }
+
+// ── Load supplier profile ──
+const { data: supplier } = await supabase
+  .from('suppliers')
+  .select('*')
+  .eq('user_id', user.id)
+  .single();
+
+if (supplier) {
+  // Populate pricing
+  document.getElementById('price-consultation').value = supplier.consultation_price || 150;
+  document.getElementById('price-survey').value = supplier.survey_price || 450;
+  document.getElementById('price-project').value = supplier.project_price || 600;
+  document.getElementById('rating-value').textContent = (supplier.rating_avg || 0).toFixed(1);
+
+  // ── Load leads ──
+  const { data: leads } = await supabase
+    .from('leads')
+    .select('*, projects(*)')
+    .eq('supplier_id', supplier.id)
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  const container = document.getElementById('leads-container');
+  if (leads && leads.length > 0) {
+    container.innerHTML = leads.map(lead => `
+      <div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <span class="font-headline text-xl">${lead.projects?.contact_name || 'Anonymous'}</span>
+            <span class="bg-secondary-container/40 px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-tighter">${lead.status}</span>
+          </div>
+          <p class="text-sm text-secondary font-body">${lead.projects?.scope_notes || lead.projects?.survey_type || 'Service enquiry'}</p>
+          <div class="flex items-center gap-4 text-xs font-label text-on-surface-variant">
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> ${lead.projects?.property_postcode || ''}</span>
+            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> ${new Date(lead.created_at).toLocaleDateString()}</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="acceptLead('${lead.id}')" class="bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90">Accept Lead</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // ── Save pricing ──
+  document.getElementById('save-pricing').addEventListener('click', async () => {
+    const btn = document.getElementById('save-pricing');
+    btn.textContent = 'Saving...';
+    const { error } = await supabase.from('suppliers').update({
+      consultation_price: parseFloat(document.getElementById('price-consultation').value),
+      survey_price: parseFloat(document.getElementById('price-survey').value),
+      project_price: parseFloat(document.getElementById('price-project').value),
+      updated_at: new Date().toISOString()
+    }).eq('id', supplier.id);
+
+    btn.textContent = error ? 'Error — retry' : 'Saved!';
+    setTimeout(() => { btn.textContent = 'Save Blueprint'; }, 2000);
+  });
+
+  // ── Active toggle ──
+  const toggle = document.querySelector('[role="switch"]');
+  if (toggle) {
+    toggle.setAttribute('aria-checked', supplier.is_active);
+    toggle.addEventListener('click', async () => {
+      const isActive = toggle.getAttribute('aria-checked') === 'true';
+      const newState = !isActive;
+      await supabase.from('suppliers').update({ is_active: newState }).eq('id', supplier.id);
+      toggle.setAttribute('aria-checked', newState);
+      toggle.classList.toggle('bg-tertiary-fixed-dim', newState);
+      toggle.classList.toggle('bg-outline-variant', !newState);
+      const thumb = toggle.querySelector('span');
+      thumb.classList.toggle('translate-x-5', newState);
+      thumb.classList.toggle('translate-x-0', !newState);
+      document.querySelector('.font-headline.text-lg').textContent = `Status: ${newState ? 'Active' : 'Inactive'}`;
+    });
+  }
+}
+
+// ── Accept lead (global) ──
+window.acceptLead = async (leadId) => {
+  await supabase.from('leads').update({ status: 'accepted' }).eq('id', leadId);
+  window.location.reload();
+};
+
+// ── Sign out (wire up nav button) ──
+const signupBtn = document.querySelector('button.bg-primary');
+if (signupBtn) {
+  signupBtn.textContent = 'Sign Out';
+  signupBtn.addEventListener('click', async () => {
+    await signOut();
+    window.location.href = 'loginpage.html';
+  });
+}
+</script>
 </footer>
 </body></html>

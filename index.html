@@ -277,5 +277,48 @@
 <div class="w-full py-8 px-8 border-t border-slate-200/10 text-center">
 <span class="font-sans Manrope text-xs tracking-wide uppercase text-slate-500 dark:text-slate-400">© 2024 East Midlands Trade Comparison. Registered in England &amp; Wales.</span>
 </div>
+<script type="module">
+import { getUser, signOut } from './supabase-client.js';
+
+// Update nav based on auth state
+const { user } = await getUser();
+const navBtns = document.querySelectorAll('nav button, header button');
+const signupBtn = [...navBtns].find(b => b.textContent.includes('Supplier Sign-up') || b.textContent.includes('Sign'));
+
+if (user && signupBtn) {
+  signupBtn.textContent = 'Dashboard';
+  signupBtn.addEventListener('click', () => { window.location.href = 'dashboard.html'; });
+
+  // Add sign-out option
+  const signOutBtn = document.createElement('button');
+  signOutBtn.textContent = 'Sign Out';
+  signOutBtn.className = 'text-slate-500 text-sm font-medium hover:text-slate-900 transition-colors';
+  signOutBtn.addEventListener('click', async () => {
+    await signOut();
+    window.location.reload();
+  });
+  signupBtn.parentElement.appendChild(signOutBtn);
+} else if (signupBtn) {
+  signupBtn.addEventListener('click', () => { window.location.href = 'loginpage.html'; });
+}
+
+// Wire up trade category links to requirement pages
+const tradeLinks = {
+  'surveyor': 'service.html',
+  'architect': 'ArchitectRequirements.html',
+  'structural': 'StructuralEngineerRequirements.html',
+  'electrician': 'electricianRequirements.html',
+  'energy': 'service.html'
+};
+
+document.querySelectorAll('a, button').forEach(el => {
+  const text = el.textContent.toLowerCase().trim();
+  for (const [key, url] of Object.entries(tradeLinks)) {
+    if (text.includes(key) && !el.href?.includes('.html')) {
+      el.addEventListener('click', (e) => { e.preventDefault(); window.location.href = url; });
+    }
+  }
+});
+</script>
 </footer>
 </body></html>

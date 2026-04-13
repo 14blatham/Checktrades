@@ -319,5 +319,9 @@
 <div class="bg-slate-800 h-px w-full my-8"></div>
 <p class="text-[10px] tracking-widest uppercase text-slate-500">© 2024 Guild &amp; Gable. The Architectural Authority.</p>
 </div>
+<script type="module">
+import { initTradeRequirementForm } from './trade-requirements.js';
+initTradeRequirementForm('Surveyor');
+</script>
 </footer>
 </body></html>

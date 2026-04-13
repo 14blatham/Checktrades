@@ -163,7 +163,7 @@
 </div>
 </aside>
 <!-- Results Grid -->
-<div class="flex-grow space-y-16">
+<div id="quotes-container" class="flex-grow space-y-16">
 <!-- Quote Card 1 -->
 <article class="bg-surface-container-lowest transition-all">
 <div class="flex flex-col md:flex-row gap-8">
@@ -342,5 +342,84 @@
 </ul>
 </div>
 </div>
+<script type="module">
+import { supabase } from './supabase-client.js';
+
+const params = new URLSearchParams(window.location.search);
+const projectId = params.get('project');
+
+// Load matching suppliers for the project's trade type
+async function loadQuotes() {
+  let tradeType = 'Surveyor'; // default
+  if (projectId) {
+    const { data: project } = await supabase.from('projects').select('*').eq('id', projectId).single();
+    if (project) {
+      tradeType = project.trade_type;
+      // Update the header description
+      const header = document.querySelector('header p');
+      if (header && project.property_postcode) {
+        header.innerHTML = `Review tailored quotes from verified professionals across the East Midlands. Based on your <span class="text-primary font-bold">${project.property_type || ''}</span> in <span class="text-primary font-bold">${project.property_postcode}</span>.`;
+      }
+    }
+  }
+
+  // Fetch active suppliers for this trade
+  const { data: suppliers } = await supabase
+    .from('suppliers')
+    .select('*, reviews(overall_rating)')
+    .eq('trade_type', tradeType)
+    .eq('is_active', true)
+    .order('rating_avg', { ascending: false })
+    .limit(10);
+
+  if (!suppliers || suppliers.length === 0) return;
+
+  const container = document.getElementById('quotes-container');
+  // Keep existing hardcoded cards as fallback but prepend real data
+  const realCards = suppliers.map((s, i) => {
+    const stars = Array.from({length: 5}, (_, j) =>
+      `<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' ${j < Math.round(s.rating_avg) ? 1 : 0};">star</span>`
+    ).join('');
+
+    return `
+    <article class="bg-surface-container-lowest transition-all">
+      <div class="flex flex-col md:flex-row gap-8">
+        <div class="md:w-2/3 flex flex-col justify-between">
+          <div>
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h2 class="font-headline text-3xl text-primary">${s.company_name}</h2>
+                <p class="font-label text-xs text-secondary mt-1 flex items-center gap-2">
+                  <span class="material-symbols-outlined text-xs">location_on</span> ${s.primary_postcode} • ${s.is_verified ? 'Verified' : 'Pending Verification'}
+                </p>
+              </div>
+              <div class="text-right">
+                <div class="font-headline text-3xl text-primary">£${s.consultation_price || '—'} - £${s.survey_price || '—'}</div>
+                <div class="text-[10px] text-outline uppercase tracking-widest font-bold">Estimated Quote</div>
+              </div>
+            </div>
+            <div class="flex gap-2 mb-6">
+              <span class="px-3 py-1 bg-secondary-container/40 rounded-full font-label text-[10px] uppercase tracking-wider text-secondary">${s.trade_type}</span>
+              <span class="px-3 py-1 bg-secondary-container/40 rounded-full font-label text-[10px] uppercase tracking-wider text-secondary">${s.years_in_business}+ years</span>
+            </div>
+            <p class="text-on-surface-variant leading-relaxed text-sm mb-6 max-w-xl">${s.description || 'Professional ' + s.trade_type.toLowerCase() + ' serving the East Midlands region.'}</p>
+          </div>
+          <div class="flex items-center gap-4">
+            <button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+            <div class="ml-auto flex items-center gap-2">
+              <span class="font-headline text-xl text-primary">${(s.rating_avg || 0).toFixed(1)}</span>
+              <div class="flex text-tertiary-fixed-dim">${stars}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+
+  if (realCards) container.innerHTML = realCards + container.innerHTML;
+}
+
+loadQuotes();
+</script>
 </footer>
 </body></html>

@@ -213,11 +213,11 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Company Name</label>
-<input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="e.g. Midlands Structural Ltd" type="text"/>
+<input id="company-name" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="e.g. Midlands Structural Ltd" type="text"/>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Trade Type</label>
-<select class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium appearance-none">
+<select id="trade-type" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium appearance-none">
 <option>Select Trade...</option>
 <option>Surveyor</option>
 <option>Architect</option>
@@ -230,21 +230,21 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Years in Business</label>
-<input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="0" type="number"/>
+<input id="years-business" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="0" type="number"/>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Primary Postcode</label>
-<input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="e.g. NG1" type="text"/>
+<input id="primary-postcode" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="e.g. NG1" type="text"/>
 </div>
 </div>
 <div class="space-y-8 mb-12">
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Full Name</label>
-<input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="Your contact name" type="text"/>
+<input id="full-name" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="Your contact name" type="text"/>
 </div>
 <div class="flex flex-col gap-2">
 <label class="font-label text-xs uppercase tracking-widest font-bold text-secondary">Email Address</label>
-<input class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="name@company.co.uk" type="email"/>
+<input id="supplier-email" class="bg-surface-container-low border-none focus:ring-0 focus:border-b-2 focus:border-primary focus:bg-surface-container-highest transition-all p-4 text-sm font-medium" placeholder="name@company.co.uk" type="email"/>
 </div>
 </div>
 <button class="w-full bg-primary text-on-primary py-5 font-bold tracking-widest uppercase hover:bg-primary/95 transition-colors" type="submit">
@@ -345,5 +345,72 @@
 <a class="font-sans Manrope text-xs tracking-wide uppercase text-slate-500 dark:text-slate-400 hover:underline decoration-slate-300 dark:decoration-slate-700 underline-offset-4" href="#">Privacy Policy</a>
 </div>
 </div>
+<script type="module">
+import { supabase, signUp, getUser } from './supabase-client.js';
+
+const form = document.querySelector('form');
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Registering...';
+  btn.disabled = true;
+
+  const email = document.getElementById('supplier-email').value;
+  const fullName = document.getElementById('full-name').value;
+  const companyName = document.getElementById('company-name').value;
+  const tradeType = document.getElementById('trade-type').value;
+  const years = parseInt(document.getElementById('years-business').value) || 0;
+  const postcode = document.getElementById('primary-postcode').value;
+
+  if (!email || !fullName || !companyName || tradeType === 'Select Trade...') {
+    alert('Please fill in all required fields.');
+    btn.textContent = 'Complete Registration';
+    btn.disabled = false;
+    return;
+  }
+
+  // 1. Create auth account
+  const tempPassword = crypto.randomUUID().slice(0, 16) + 'A1!';
+  const { data: authData, error: authError } = await signUp(email, tempPassword, {
+    full_name: fullName,
+    role: 'supplier'
+  });
+
+  if (authError) {
+    // If user already exists, try to just add supplier record
+    if (!authError.message.includes('already registered')) {
+      alert('Registration error: ' + authError.message);
+      btn.textContent = 'Complete Registration';
+      btn.disabled = false;
+      return;
+    }
+  }
+
+  const userId = authData?.user?.id;
+
+  // 2. Create supplier record
+  if (userId) {
+    const { error: supError } = await supabase.from('suppliers').insert({
+      user_id: userId,
+      company_name: companyName,
+      trade_type: tradeType,
+      years_in_business: years,
+      primary_postcode: postcode,
+      postcode_coverage: [postcode.split(' ')[0]]
+    });
+
+    if (supError) {
+      console.error('Supplier insert error:', supError);
+      alert('Account created but profile setup failed. Please contact support.');
+      btn.textContent = 'Complete Registration';
+      btn.disabled = false;
+      return;
+    }
+  }
+
+  // 3. Redirect to verification
+  window.location.href = 'emailverificationlandingpage.html';
+});
+</script>
 </footer>
 </body></html>
