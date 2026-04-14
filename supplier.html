@@ -416,4 +416,41 @@ form.addEventListener('submit', async (e) => {
       <!-- Supabase Connection -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+      <script>
+document.querySelector('form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  setLoading(btn, true);
+
+  try {
+    const formData = new FormData(this);
+    const email = formData.get('email');
+    const password = formData.get('password');
+    const companyName = formData.get('company_name');
+
+    // 1. Create auth account
+    const authData = await signUp(email, password, companyName, 'supplier');
+
+    // 2. Create supplier profile
+    await registerSupplier({
+      user_id: authData.user.id,
+      company_name: companyName,
+      trade_type: formData.get('trade_type'),
+      primary_postcode: formData.get('postcode'),
+      description: formData.get('description') || '',
+      years_in_business: parseInt(formData.get('years_in_business')) || 0,
+      consultation_price: parseFloat(formData.get('consultation_price')) || null,
+      survey_price: parseFloat(formData.get('survey_price')) || null
+    });
+
+    showToast('Registration successful! Check your email to verify your account.');
+    this.reset();
+  } catch (err) {
+    console.error(err);
+    showToast(err.message || 'Registration failed. Please try again.', 'error');
+  } finally {
+    setLoading(btn, false);
+  }
+});
+</script>
 </body></html>
