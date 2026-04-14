@@ -291,7 +291,7 @@ document.querySelectorAll('button[type="button"]').forEach(btn => {
 // "Join the Guild" → switch to sign-up mode
 const joinLink = document.querySelector('a[href="#"]');
 const allLinks = document.querySelectorAll('a[href="#"]');
-const joinGuild = [...allLinks].find(a => a.textContent.trim() === 'Join the Guild');
+const joinGuild = [...allLinks].find(a => a.textContent.trim() === 'Join other tradespeople');
 if (joinGuild) {
   joinGuild.addEventListener('click', (e) => {
     e.preventDefault();
