@@ -329,4 +329,36 @@ initTradeRequirementForm('Architect');
         <!-- Supabase Connection -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+        <script>
+document.querySelector('form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = this.querySelector('button[type="submit"]');
+  setLoading(btn, true);
+
+  try {
+    // Collect all form fields
+    const formData = new FormData(this);
+    const result = await submitProject({
+      trade_type: 'Architect',          // Change per page: 'Surveyor', 'Structural Engineer', etc.
+      contact_name: formData.get('name') || formData.get('contact_name'),
+      contact_email: formData.get('email') || formData.get('contact_email'),
+      contact_phone: formData.get('phone') || formData.get('contact_phone'),
+      property_postcode: formData.get('postcode') || formData.get('property_postcode'),
+      property_type: formData.get('property_type'),
+      scope_notes: formData.get('scope_notes') || formData.get('description') || formData.get('details'),
+      budget_range: formData.get('budget') || formData.get('budget_range'),
+      service_category: formData.get('service_category') || formData.get('service_type'),
+      survey_type: formData.get('survey_type')
+    });
+
+    showToast('Your request has been submitted! We\'ll match you with local professionals.');
+    this.reset();
+  } catch (err) {
+    console.error(err);
+    showToast('Something went wrong. Please try again.', 'error');
+  } finally {
+    setLoading(btn, false);
+  }
+});
+</script>
 </body></html>
