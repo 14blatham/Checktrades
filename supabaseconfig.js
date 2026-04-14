@@ -11,7 +11,7 @@
 // ⚠️  REPLACE these with your real values from:
 //     Supabase Dashboard → Settings → API
 const SUPABASE_URL = 'https://xxdkchgizvpdwjszwfby.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE'; // paste your anon key
+const SUPABASE_ANON_KEY = 'sb_secret_rwzEXsFemw1g2_RVowoK6Q_L6VPhONF'; 
 
 // Initialise the client (available globally as `supabase`)
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
