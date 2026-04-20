@@ -278,7 +278,7 @@
 </div>
 </div>
 <script type="module">
-import { supabase, getUser } from './supabaseconfig.js';
+import { supabase, getUser } from './supabase-config.js';
 
 let selectedBedrooms = 3;
 let selectedSurveyType = 'RICS Home Survey Level 2';
@@ -340,23 +340,29 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     return;
   }
 
-  // Auto-create leads for matching active suppliers
-  const { data: suppliers } = await supabase
+  // Auto-create leads — only for suppliers covering this postcode
+  const postcodePrefix = postcode.trim().toUpperCase().split(' ')[0].replace(/\d.*$/, '');
+
+  const { data: allSuppliers } = await supabase
     .from('suppliers')
-    .select('id')
+    .select('id, postcode_coverage, supplier_postcodes(postcode_prefix)')
     .eq('trade_type', 'Surveyor')
     .eq('is_active', true);
 
-  if (suppliers && suppliers.length > 0) {
-    const leadInserts = suppliers.map(s => ({ project_id: data.id, supplier_id: s.id, status: 'new' }));
-    await supabase.from('leads').insert(leadInserts);
+  const matched = (allSuppliers || []).filter(s =>
+    s.postcode_coverage?.includes(postcodePrefix) ||
+    s.supplier_postcodes?.some(p => p.postcode_prefix === postcodePrefix)
+  );
+
+  if (matched.length > 0) {
+    await supabase.from('leads').insert(
+      matched.map(s => ({ project_id: data.id, supplier_id: s.id, status: 'new' }))
+    );
   }
 
   window.location.href = 'quotes.html?project=' + data.id;
 });
 </script>
 </footer>
-        <!-- Supabase Connection -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<script src="page-transitions.js"></script>
 </body></html>

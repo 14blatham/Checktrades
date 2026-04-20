@@ -137,33 +137,30 @@ export async function updateSupplier(supplierId, updates) {
 
 export async function getLeadsForSupplier(supplierId) {
   const { data, error } = await supabase
-    .from('leads_matched')
+    .from('leads')
     .select(`
       *,
-      leads!inner (
-        status,
-        projects:project_id (
-          trade_type, property_postcode, property_type,
-          contact_name, contact_email, contact_phone,
-          scope_notes, budget_range, created_at
-        )
+      projects:project_id (
+        trade_type, property_postcode, property_type,
+        contact_name, contact_email, contact_phone,
+        scope_notes, budget_range, created_at
       )
     `)
     .eq('supplier_id', supplierId)
-    .order('matched_at', { ascending: false });
+    .order('created_at', { ascending: false });
   if (error) throw error;
   return data;
 }
 
-export async function respondToLead(matchId, accepted, declineReason = null) {
+export async function respondToLead(leadId, accepted, declineReason = null) {
   const updates = accepted
-    ? { status: 'accepted', accepted_at: new Date().toISOString() }
-    : { status: 'declined', declined_at: new Date().toISOString(), decline_reason: declineReason };
+    ? { status: 'accepted' }
+    : { status: 'declined', decline_reason: declineReason };
 
   const { data, error } = await supabase
-    .from('leads_matched')
+    .from('leads')
     .update(updates)
-    .eq('id', matchId)
+    .eq('id', leadId)
     .select()
     .single();
   if (error) throw error;

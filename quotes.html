@@ -343,7 +343,7 @@
 </div>
 </div>
 <script type="module">
-import { supabase } from './supabaseconfig.js';
+import { supabase, getUser } from './supabase-config.js';
 
 const params = new URLSearchParams(window.location.search);
 const projectId = params.get('project');
@@ -405,7 +405,7 @@ async function loadQuotes() {
             <p class="text-on-surface-variant leading-relaxed text-sm mb-6 max-w-xl">${s.description || 'Professional ' + s.trade_type.toLowerCase() + ' serving the East Midlands region.'}</p>
           </div>
           <div class="flex items-center gap-4">
-            <button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+            <button onclick="contactSupplier('${s.company_name}','${s.primary_postcode}','${s.trade_type}')" class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
             <div class="ml-auto flex items-center gap-2">
               <span class="font-headline text-xl text-primary">${(s.rating_avg || 0).toFixed(1)}</span>
               <div class="flex text-tertiary-fixed-dim">${stars}</div>
@@ -420,9 +420,42 @@ async function loadQuotes() {
 }
 
 loadQuotes();
+
+window.contactSupplier = async (name, postcode, tradeType) => {
+  const { user } = await getUser();
+  if (!user) { window.location.href = 'loginpage.html'; return; }
+  document.getElementById('sq-modal-name').textContent = name;
+  document.getElementById('sq-modal-detail').textContent = `${tradeType} · ${postcode}`;
+  document.getElementById('supplier-contact-modal').classList.remove('hidden');
+};
 </script>
 </footer>
-      <!-- Supabase Connection -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+
+<!-- Supplier Contact Modal -->
+<div id="supplier-contact-modal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-primary/60 backdrop-blur-sm hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-surface-container-lowest w-full max-w-sm mx-4 shadow-2xl">
+    <div class="bg-primary px-8 py-6 flex justify-between items-start">
+      <div>
+        <p class="font-label text-[10px] uppercase tracking-[0.2em] text-on-primary/50 mb-1">Supplier Details</p>
+        <h2 id="sq-modal-name" class="font-headline text-2xl text-on-primary"></h2>
+        <p id="sq-modal-detail" class="text-on-primary/70 text-sm font-body mt-1"></p>
+      </div>
+      <button onclick="document.getElementById('supplier-contact-modal').classList.add('hidden')" class="text-on-primary/50 hover:text-on-primary transition-colors mt-1">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-8">
+      <div class="flex items-start gap-3 bg-surface-container-low p-4 rounded-sm">
+        <span class="material-symbols-outlined text-primary mt-0.5" style="font-variation-settings:'FILL' 1">verified</span>
+        <p class="text-sm font-body text-on-surface-variant leading-relaxed">Your enquiry has been matched with this supplier. A representative will contact you within <strong class="text-primary">24 hours</strong>.</p>
+      </div>
+    </div>
+    <div class="px-8 pb-8">
+      <button onclick="document.getElementById('supplier-contact-modal').classList.add('hidden')" class="w-full border border-outline-variant/20 py-3 text-xs font-bold uppercase tracking-widest text-primary hover:bg-surface-container-low transition-colors">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
+<script src="page-transitions.js"></script>
 </body></html>

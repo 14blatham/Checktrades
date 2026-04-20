@@ -1,7 +1,7 @@
 // trade-requirements.js
 // Shared logic for all trade requirement forms (Architect, Electrician, Structural Engineer, Surveyor)
 
-import { supabase, getUser } from './supabaseconfig.js';
+import { supabase, getUser } from './supabase-config.js';
 
 export function initTradeRequirementForm(tradeType) {
   const form = document.querySelector('form') || document.querySelector('[type="submit"]')?.closest('form') || document.body;
@@ -33,8 +33,6 @@ export function initTradeRequirementForm(tradeType) {
 
   submitBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    submitBtn.textContent = 'Submitting...';
-    submitBtn.disabled = true;
 
     const postcode = findInputByLabel('postcode')?.value || findInputByLabel('location')?.value || '';
     const budget = findInputByLabel('budget')?.value || '';
@@ -45,67 +43,69 @@ export function initTradeRequirementForm(tradeType) {
 
     if (!postcode || !name) {
       alert('Please fill in at least your postcode and name.');
-      submitBtn.textContent = 'Request Expert Consultation';
-      submitBtn.disabled = false;
       return;
     }
 
-    const { user } = await getUser();
+    submitBtn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-2"></span>Submitting...';
+    submitBtn.disabled = true;
 
-    // 1. Create the project
-    const { data: project, error: projErr } = await supabase.from('projects').insert({
-      homeowner_id: user?.id || null,
-      trade_type: tradeType,
-      survey_type: serviceCategory,
-      property_postcode: postcode,
-      contact_name: name,
-      contact_phone: phone,
-      contact_email: user?.email || '',
-      scope_notes: scope,
-      budget_range: budget,
-      status: 'open'
-    }).select().single();
+    try {
+      const { user } = await getUser();
 
-    if (projErr) {
-      alert('Error: ' + projErr.message);
-      submitBtn.textContent = 'Request Expert Consultation';
-      submitBtn.disabled = false;
-      return;
-    }
+      // 1. Create the project
+      const { data: project, error: projErr } = await supabase.from('projects').insert({
+        homeowner_id: user?.id || null,
+        trade_type: tradeType,
+        survey_type: serviceCategory,
+        property_postcode: postcode,
+        contact_name: name,
+        contact_phone: phone,
+        contact_email: user?.email || '',
+        scope_notes: scope,
+        budget_range: budget,
+        status: 'open'
+      }).select().single();
 
-    // 2. Create detailed trade requirement
-    await supabase.from('trade_requirements').insert({
-      project_id: project.id,
-      trade_type: tradeType,
-      service_category: serviceCategory,
-      budget_range: budget,
-      scope_notes: scope,
-      postcode: postcode,
-      contact_name: name,
-      contact_number: phone
-    });
+      if (projErr) throw projErr;
 
-    // 3. Generate leads — only for suppliers covering this postcode
-    const postcodePrefix = postcode.trim().toUpperCase().split(' ')[0].replace(/\d.*$/, '');
+      // 2. Create detailed trade requirement
+      await supabase.from('trade_requirements').insert({
+        project_id: project.id,
+        trade_type: tradeType,
+        service_category: serviceCategory,
+        budget_range: budget,
+        scope_notes: scope,
+        postcode: postcode,
+        contact_name: name,
+        contact_number: phone
+      });
 
-    const { data: allSuppliers } = await supabase
-      .from('suppliers')
-      .select('id, postcode_coverage, supplier_postcodes(postcode_prefix)')
-      .eq('trade_type', tradeType)
-      .eq('is_active', true);
+      // 3. Generate leads — only for suppliers covering this postcode
+      const postcodePrefix = postcode.trim().toUpperCase().split(' ')[0].replace(/\d.*$/, '');
 
-    const matched = (allSuppliers || []).filter(s =>
-      s.postcode_coverage?.includes(postcodePrefix) ||
-      s.supplier_postcodes?.some(p => p.postcode_prefix === postcodePrefix)
-    );
+      const { data: allSuppliers } = await supabase
+        .from('suppliers')
+        .select('id, postcode_coverage, supplier_postcodes(postcode_prefix)')
+        .eq('trade_type', tradeType)
+        .eq('is_active', true);
 
-    if (matched.length > 0) {
-      await supabase.from('leads').insert(
-        matched.map(s => ({ project_id: project.id, supplier_id: s.id, status: 'new' }))
+      const matched = (allSuppliers || []).filter(s =>
+        s.postcode_coverage?.includes(postcodePrefix) ||
+        s.supplier_postcodes?.some(p => p.postcode_prefix === postcodePrefix)
       );
-    }
 
-    // 4. Redirect to quotes
-    window.location.href = 'quotes.html?project=' + project.id;
+      if (matched.length > 0) {
+        await supabase.from('leads').insert(
+          matched.map(s => ({ project_id: project.id, supplier_id: s.id, status: 'new' }))
+        );
+      }
+
+      // 4. Redirect to quotes
+      window.location.href = 'quotes.html?project=' + project.id;
+    } catch (err) {
+      submitBtn.textContent = 'Request Expert Consultation';
+      submitBtn.disabled = false;
+      alert('Something went wrong: ' + (err.message || 'Please try again.'));
+    }
   });
 }

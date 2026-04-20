@@ -188,7 +188,7 @@
 <h2 class="font-headline text-4xl md:text-5xl text-white mb-6">Scale Your Practice with Zero Commission.</h2>
 <p class="font-body text-white/60 text-lg">We provide intent homeowners ready to book surveys worth £500–£1500.</p>
 </div>
-<button class="bg-tertiary-fixed text-primary px-10 py-4 font-sans font-bold text-sm tracking-widest uppercase hover:bg-tertiary-fixed-dim transition-colors">Join for free</button>
+<a href="supplier.html"><button class="bg-tertiary-fixed text-primary px-10 py-4 font-sans font-bold text-sm tracking-widest uppercase hover:bg-tertiary-fixed-dim transition-colors">Join for free</button></a>
 </div>
 <div class="grid md:grid-cols-3 gap-1">
 <div class="bg-white/5 backdrop-blur-sm p-12 border border-white/10">
@@ -278,7 +278,7 @@
 <span class="font-sans Manrope text-xs tracking-wide uppercase text-slate-500 dark:text-slate-400">© 2024 East Midlands Trade Comparison. Registered in England &amp; Wales.</span>
 </div>
 <script type="module">
-import { getUser, signOut } from './supabaseconfig.js';
+import { getUser, signOut } from './supabase-config.js';
 
 // Update nav based on auth state
 const { user } = await getUser();
@@ -321,7 +321,5 @@ document.querySelectorAll('a, button').forEach(el => {
 });
 </script>
 </footer>
-      <!-- Supabase Connection -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<script src="page-transitions.js"></script>
 </body></html>

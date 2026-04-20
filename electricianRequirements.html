@@ -86,7 +86,7 @@
 <!-- Navigation from COMPONENTS_11 -->
 <nav class="fixed top-0 w-full z-50 bg-slate-50/80 backdrop-blur-md border-b border-slate-200/20 shadow-sm">
 <div class="flex justify-between items-center px-6 py-4 max-w-7xl mx-auto">
-<div class="text-xl font-headline tracking-tight text-slate-900">Guild &amp; Gable</div>
+<div class="text-xl font-headline tracking-tight text-slate-900">EastMidlandsTrade</div>
 <div class="hidden md:flex items-center gap-8">
 <a class="text-slate-500 hover:text-slate-900 transition-colors font-label text-sm tracking-wide" href="#">Find Trade</a>
 <a class="text-slate-500 hover:text-slate-900 transition-colors font-label text-sm tracking-wide" href="#">How it Works</a>
@@ -300,7 +300,7 @@
 <footer class="bg-slate-900 py-12 px-8">
 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto">
 <div>
-<div class="text-lg font-headline text-white mb-6">Guild &amp; Gable</div>
+<div class="text-lg font-headline text-white mb-6">EastMidlandsTrade</div>
 <p class="text-slate-400 text-xs leading-relaxed max-w-xs">
                     Setting the architectural standard for UK trades through precision, heritage, and modern innovation.
                 </p>
@@ -314,7 +314,7 @@
 </ul>
 </div>
 <div>
-<h6 class="text-xs tracking-widest uppercase font-label text-amber-200 mb-6">Guild</h6>
+<h6 class="text-xs tracking-widest uppercase font-label text-amber-200 mb-6">Company</h6>
 <ul class="space-y-3">
 <li><a class="text-amber-200 hover:text-white text-xs transition-colors font-label uppercase tracking-widest" href="#">Electricians</a></li>
 <li><a class="text-slate-400 hover:text-white text-xs transition-colors font-label uppercase tracking-widest" href="#">Energy Assessors</a></li>
@@ -329,7 +329,7 @@
 </div>
 <div class="mt-8">
 <p class="text-slate-500 text-[10px] font-label tracking-widest uppercase">
-                        © 2026 EastMidlandsTrades &amp; Trades Found Easy.
+                        © 2026 EastMidlandsTrade. Trades Found Easy.
                     </p>
 </div>
 </div>
@@ -340,9 +340,6 @@ import { initTradeRequirementForm } from './trade-requirements.js';
 initTradeRequirementForm('Electrician');
 </script>
 </footer>
-        <!-- Supabase Connection -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
         <script>
 document.querySelector('form').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -375,4 +372,5 @@ document.querySelector('form').addEventListener('submit', async function(e) {
   }
 });
 </script>
+<script src="page-transitions.js"></script>
 </body></html>
