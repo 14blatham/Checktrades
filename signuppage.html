@@ -119,9 +119,9 @@
 <div class="w-12 h-0.5 bg-tertiary-fixed-dim"></div>
 </div>
 <div class="max-w-xl">
-<h2 class="text-surface font-headline text-5xl font-bold leading-tight mb-6">The architectural authority in trade.</h2>
+<h2 class="text-surface font-headline text-5xl font-bold leading-tight mb-6">Build your trade journey with confidence.</h2>
 <p class="text-on-primary-container font-body text-lg leading-relaxed max-w-md">
-                        Connecting discerning homeowners with the gold standard of craftsmanship. Every professional, verified. Every project, a masterpiece.
+                        Create your account to start requesting trusted professionals and managing projects with complete clarity.
                     </p>
 </div>
 <div class="flex items-center gap-4">
@@ -137,7 +137,7 @@
 </div>
 </div>
 <p class="text-surface-container-highest text-sm font-label tracking-wide">
-                        JOIN VERIFIED MASTER TRADES
+                        TRUSTED BY MIDLANDS HOMEOWNERS
                     </p>
 </div>
 </div>
@@ -151,62 +151,80 @@
 <div class="w-full max-w-md space-y-10">
 <!-- Header Section -->
 <div class="space-y-3">
-<span class="text-tertiary-fixed-dim font-label text-xs font-bold uppercase tracking-widest">Secure Access</span>
-<h3 class="text-primary font-headline text-3xl font-bold">Welcome Back</h3>
+<span class="text-tertiary-fixed-dim font-label text-xs font-bold uppercase tracking-widest">New Account</span>
+<h3 class="text-primary font-headline text-3xl font-bold">Create Your Profile</h3>
 <p class="text-secondary font-body text-sm leading-relaxed">
-                        Please enter your credentials to access your professional dashboard.
+                        Register in under a minute and start receiving project-ready matches.
                     </p>
 </div>
 <!-- Form Section -->
-<form class="space-y-6">
+<form class="space-y-6" id="signup-form">
+<!-- Full Name Field -->
+<div class="space-y-2 group">
+<label class="text-on-surface-variant font-label text-xs font-semibold uppercase tracking-wider block" for="full-name">Full Name</label>
+<div class="relative bg-surface-container-lowest input-line-transition p-1">
+<div class="flex items-center px-3 py-2">
+<span class="material-symbols-outlined text-outline-variant mr-3 text-sm">person</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="full-name" name="full_name" placeholder="e.g. Alex Harper" type="text"/>
+</div>
+</div>
+</div>
 <!-- Email Field -->
 <div class="space-y-2 group">
 <label class="text-on-surface-variant font-label text-xs font-semibold uppercase tracking-wider block" for="email">Email Address</label>
 <div class="relative bg-surface-container-lowest input-line-transition p-1">
 <div class="flex items-center px-3 py-2">
 <span class="material-symbols-outlined text-outline-variant mr-3 text-sm">mail</span>
-<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="email" name="email" placeholder="e.g. craftsman@guildgable.com" type="email"/>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="email" name="email" placeholder="e.g. homeowner@guildgable.com" type="email"/>
 </div>
 </div>
 </div>
 <!-- Password Field -->
 <div class="space-y-2 group">
-<div class="flex justify-between items-center">
 <label class="text-on-surface-variant font-label text-xs font-semibold uppercase tracking-wider" for="password">Password</label>
-<a class="text-primary font-body text-[10px] uppercase font-bold tracking-widest hover:text-tertiary-fixed-dim transition-colors" href="#">Forgot Password?</a>
-</div>
 <div class="relative bg-surface-container-lowest input-line-transition p-1">
 <div class="flex items-center px-3 py-2">
 <span class="material-symbols-outlined text-outline-variant mr-3 text-sm">lock</span>
-<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="password" name="password" placeholder="••••••••" type="password"/>
-<span class="material-symbols-outlined text-outline-variant cursor-pointer text-sm hover:text-primary transition-colors">visibility</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="password" name="password" placeholder="At least 8 characters" type="password"/>
+<button class="material-symbols-outlined text-outline-variant cursor-pointer text-sm hover:text-primary transition-colors" id="toggle-password" type="button">visibility</button>
 </div>
 </div>
 </div>
-<!-- Remember Me -->
+<!-- Confirm Password Field -->
+<div class="space-y-2 group">
+<label class="text-on-surface-variant font-label text-xs font-semibold uppercase tracking-wider" for="confirm-password">Confirm Password</label>
+<div class="relative bg-surface-container-lowest input-line-transition p-1">
+<div class="flex items-center px-3 py-2">
+<span class="material-symbols-outlined text-outline-variant mr-3 text-sm">enhanced_encryption</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-on-surface font-body text-sm placeholder:text-outline-variant/60 py-1" id="confirm-password" name="confirm_password" placeholder="Re-enter password" type="password"/>
+<button class="material-symbols-outlined text-outline-variant cursor-pointer text-sm hover:text-primary transition-colors" id="toggle-confirm-password" type="button">visibility</button>
+</div>
+</div>
+</div>
+<!-- Consent -->
 <div class="flex items-center space-x-3 py-2">
-<div class="relative flex items-center">
-<input class="w-4 h-4 border-outline-variant rounded-sm text-primary focus:ring-primary/20" id="remember" type="checkbox"/>
-</div>
-<label class="text-secondary font-body text-xs cursor-pointer" for="remember">Keep me signed in for 30 days</label>
+<input class="w-4 h-4 border-outline-variant rounded-sm text-primary focus:ring-primary/20" id="terms" type="checkbox"/>
+<label class="text-secondary font-body text-xs cursor-pointer" for="terms">
+                        I agree to the Terms and Privacy Policy
+                    </label>
 </div>
 <!-- Actions -->
 <div class="pt-4 space-y-4">
-<button class="w-full bg-primary text-on-primary font-label text-sm font-bold uppercase tracking-widest py-4 rounded-sm hover:opacity-90 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2" type="submit">
-                            Sign In
+<button class="w-full bg-primary text-on-primary font-label text-sm font-bold uppercase tracking-widest py-4 rounded-sm hover:opacity-90 transition-all transform active:scale-[0.99] flex items-center justify-center gap-2" id="submit-btn" type="submit">
+                            Create Account
                             <span class="material-symbols-outlined text-sm">arrow_forward</span>
 </button>
 <div class="flex items-center gap-4 py-2">
 <div class="h-px flex-1 bg-outline-variant/20"></div>
-<span class="text-[10px] font-label text-outline-variant font-bold uppercase tracking-tighter">or sign in with</span>
+<span class="text-[10px] font-label text-outline-variant font-bold uppercase tracking-tighter">or sign up with</span>
 <div class="h-px flex-1 bg-outline-variant/20"></div>
 </div>
 <div class="grid grid-cols-2 gap-4">
-<button class="flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-lowest ghost-border rounded-sm hover:bg-surface transition-colors" type="button">
+<button class="flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-lowest ghost-border rounded-sm hover:bg-surface transition-colors" id="google-signup" type="button">
 <img alt="Google" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyVTaoL9Nflvjcw2qh16R2Dwo8Fu44d7Pv0MB5mMFIRCVC0ClCJxKhz7W58DQqJ0ZCjKxLMuSCSTVz9TIM5JN37Sbe_e0jRGtDYMG1JxrHJbhJp41HKVuILZnxCzujYuISAS4asoK6pmMlo-5KFZYn1cS9u1l_24nNBLo0MurxVBsoAwIt0CfAimczbBowKKzjfYsG4AItW0UXHegngeNeYWckCBpIE_QaqR0E8mTGO3BLLnb3bQzSJJyO2zTcQH32YRg6CjZ2zLoK"/>
 <span class="text-primary font-label text-[10px] font-bold uppercase tracking-wider">Google</span>
 </button>
-<button class="flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-lowest ghost-border rounded-sm hover:bg-surface transition-colors" type="button">
+<button class="flex items-center justify-center gap-2 py-3 px-4 bg-surface-container-lowest ghost-border rounded-sm hover:bg-surface transition-colors" id="apple-signup" type="button">
 <span class="material-symbols-outlined text-sm text-primary">ios</span>
 <span class="text-primary font-label text-[10px] font-bold uppercase tracking-wider">Apple</span>
 </button>
@@ -216,8 +234,8 @@
 <!-- Footer Call to Action -->
 <div class="pt-8 text-center border-t border-outline-variant/10">
 <p class="text-secondary font-body text-sm">
-                        Don't have an account? 
-                        <a class="text-primary font-bold ml-1 hover:text-tertiary-fixed-dim transition-colors" href="signuppage.html">Create your account</a>
+                        Already have an account?
+                        <a class="text-primary font-bold ml-1 hover:text-tertiary-fixed-dim transition-colors" href="loginpage.html">Sign in</a>
 </p>
 </div>
 </div>
@@ -235,121 +253,79 @@
 </div>
 </main>
 <script type="module">
-import { signIn, signUp, signInWithGoogle, signInWithApple, resetPassword, getUser } from './supabaseconfig.js';
+import { signUp, signInWithGoogle, signInWithApple, getUser } from './supabaseconfig.js';
 
-// Redirect if already logged in
 const { user } = await getUser();
 if (user) window.location.href = 'dashboard.html';
 
-// Sign In
-document.querySelector('form').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.textContent = 'Signing in...';
-  btn.disabled = true;
+const form = document.getElementById('signup-form');
+const submitBtn = document.getElementById('submit-btn');
 
-  const { data, error } = await signIn(email, password);
-  if (error) {
-    alert(error.message);
-    btn.innerHTML = 'Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>';
-    btn.disabled = false;
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const fullName = document.getElementById('full-name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const confirmPassword = document.getElementById('confirm-password').value;
+  const termsAccepted = document.getElementById('terms').checked;
+
+  if (!fullName || !email || !password || !confirmPassword) {
+    alert('Please complete all required fields.');
     return;
   }
-  window.location.href = 'dashboard.html';
+
+  if (password.length < 8) {
+    alert('Password must be at least 8 characters long.');
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  if (!termsAccepted) {
+    alert('Please accept the terms to continue.');
+    return;
+  }
+
+  submitBtn.innerHTML = 'Creating account... <span class="material-symbols-outlined text-sm">hourglass_top</span>';
+  submitBtn.disabled = true;
+
+  const { error } = await signUp(email, password, { role: 'homeowner', full_name: fullName });
+
+  if (error) {
+    alert(error.message);
+    submitBtn.innerHTML = 'Create Account <span class="material-symbols-outlined text-sm">arrow_forward</span>';
+    submitBtn.disabled = false;
+    return;
+  }
+
+  window.location.href = 'emailverificationlandingpage.html';
 });
 
-// Forgot Password
-document.querySelector('a[href="#"]').addEventListener('click', async (e) => {
-  if (e.target.textContent.trim() !== 'Forgot Password?') return;
-  e.preventDefault();
-  const email = document.getElementById('email').value;
-  if (!email) { alert('Please enter your email address first.'); return; }
-  const { error } = await resetPassword(email);
+document.getElementById('google-signup').addEventListener('click', async () => {
+  const { error } = await signInWithGoogle();
   if (error) alert(error.message);
-  else alert('Password reset link sent! Check your email.');
 });
 
-// Google OAuth
-document.querySelectorAll('button[type="button"]').forEach(btn => {
-  const label = btn.textContent.trim();
-  if (label.includes('Google')) {
-    btn.addEventListener('click', async () => {
-      const { error } = await signInWithGoogle();
-      if (error) alert(error.message);
-    });
-  }
-  if (label.includes('Apple')) {
-    btn.addEventListener('click', async () => {
-      const { error } = await signInWithApple();
-      if (error) alert(error.message);
-    });
-  }
+document.getElementById('apple-signup').addEventListener('click', async () => {
+  const { error } = await signInWithApple();
+  if (error) alert(error.message);
 });
 
-// "Join the Guild" → switch to sign-up mode
-const joinLink = document.querySelector('a[href="#"]');
-const allLinks = document.querySelectorAll('a[href="#"]');
-const joinGuild = [...allLinks].find(a => a.textContent.trim() === 'Join other tradespeople');
-if (joinGuild) {
-  joinGuild.addEventListener('click', (e) => {
-    e.preventDefault();
-    const heading = document.querySelector('h3');
-    const submitBtn = document.querySelector('button[type="submit"]');
-    const isSignUp = heading.textContent === 'Welcome Back';
-
-    if (isSignUp) {
-      heading.textContent = 'Create Account';
-      submitBtn.innerHTML = 'Create Account <span class="material-symbols-outlined text-sm">arrow_forward</span>';
-      joinGuild.textContent = 'Sign in instead';
-      // Switch form to sign-up mode
-      document.querySelector('form').dataset.mode = 'signup';
-    } else {
-      heading.textContent = 'Welcome Back';
-      submitBtn.innerHTML = 'Sign In <span class="material-symbols-outlined text-sm">arrow_forward</span>';
-      joinGuild.textContent = 'Join the Guild';
-      document.querySelector('form').dataset.mode = 'signin';
-    }
-  });
-
-  // Override form submit to handle sign-up
-  const form = document.querySelector('form');
-  const originalHandler = form.onsubmit;
-  form.addEventListener('submit', async (e) => {
-    if (form.dataset.mode !== 'signup') return; // let the sign-in handler run
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const btn = form.querySelector('button[type="submit"]');
-    btn.textContent = 'Creating account...';
-    btn.disabled = true;
-
-    const { data, error } = await signUp(email, password, { role: 'homeowner' });
-    if (error) {
-      alert(error.message);
-      btn.innerHTML = 'Create Account <span class="material-symbols-outlined text-sm">arrow_forward</span>';
-      btn.disabled = false;
-      return;
-    }
-    window.location.href = 'emailverificationlandingpage.html';
-  }, true);
-}
-
-// Password visibility toggle
-const visIcon = document.querySelector('.material-symbols-outlined[style]') ||
-  [...document.querySelectorAll('.material-symbols-outlined')].find(el => el.textContent.trim() === 'visibility');
-if (visIcon) {
-  visIcon.addEventListener('click', () => {
-    const pw = document.getElementById('password');
-    const isHidden = pw.type === 'password';
-    pw.type = isHidden ? 'text' : 'password';
-    visIcon.textContent = isHidden ? 'visibility_off' : 'visibility';
+function bindVisibilityToggle(toggleId, inputId) {
+  const toggle = document.getElementById(toggleId);
+  const input = document.getElementById(inputId);
+  toggle.addEventListener('click', () => {
+    const hidden = input.type === 'password';
+    input.type = hidden ? 'text' : 'password';
+    toggle.textContent = hidden ? 'visibility_off' : 'visibility';
   });
 }
+
+bindVisibilityToggle('toggle-password', 'password');
+bindVisibilityToggle('toggle-confirm-password', 'confirm-password');
 </script>
-      <!-- Supabase Connection -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
 </body></html>
