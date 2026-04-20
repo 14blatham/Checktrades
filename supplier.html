@@ -352,7 +352,7 @@ const form = document.querySelector('form');
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const btn = form.querySelector('button[type="submit"]');
-  btn.textContent = 'Registering...';
+  btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin align-middle mr-2"></span>Registering...';
   btn.disabled = true;
 
   const email = document.getElementById('supplier-email').value;
@@ -416,6 +416,7 @@ form.addEventListener('submit', async (e) => {
       <!-- Supabase Connection -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+<script src="page-transitions.js"></script>
       <script>
 document.querySelector('form').addEventListener('submit', async function(e) {
   e.preventDefault();
