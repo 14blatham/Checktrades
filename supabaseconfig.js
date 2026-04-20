@@ -1,63 +1,66 @@
-// ============================================================
-// Checktrades — Supabase Connection
-// ============================================================
-// Add this file to your GitHub repo root, then include it
-// in every HTML page AFTER the Supabase CDN script:
-//
-//   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-//   <script src="supabase-config.js"></script>
-// ============================================================
+// supabaseconfig.js — single Supabase client for all pages (ES module)
 
-// ⚠️  REPLACE these with your real values from:
-//     Supabase Dashboard → Settings → API
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
 const SUPABASE_URL = 'https://xxdkchgizvpdwjszwfby.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_secret_rwzEXsFemw1g2_RVowoK6Q_L6VPhONF'; 
+const SUPABASE_ANON_KEY = 'sb_secret_rwzEXsFemw1g2_RVowoK6Q_L6VPhONF';
 
-// Initialise the client (available globally as `supabase`)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
 // ============================================================
-// AUTH HELPERS
+// AUTH HELPERS — all return { data, error } or { user, error }
 // ============================================================
 
-async function signUp(email, password, fullName, role = 'homeowner') {
+export async function signUp(email, password, metadata = {}) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: fullName, role } }
+    options: { data: metadata }
   });
-  if (error) throw error;
-  return data;
+  return { data, error };
 }
 
-async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password
-  });
-  if (error) throw error;
-  return data;
+export async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  return { data, error };
 }
 
-async function signOut() {
+export async function signInWithGoogle() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.origin + '/emailverificationlandingpage.html' }
+  });
+  return { data, error };
+}
+
+export async function signInWithApple() {
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'apple',
+    options: { redirectTo: window.location.origin + '/emailverificationlandingpage.html' }
+  });
+  return { data, error };
+}
+
+export async function signOut() {
   const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  return { error };
 }
 
-async function getCurrentUser() {
-  const { data: { user } } = await supabase.auth.getUser();
-  return user;
+export async function getUser() {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  return { user, error };
 }
 
-async function getProfile(userId) {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .single();
-  if (error) throw error;
-  return data;
+export async function resetPassword(email) {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + '/loginpage.html'
+  });
+  return { data, error };
+}
+
+export function onAuthStateChange(callback) {
+  return supabase.auth.onAuthStateChange((event, session) => callback(event, session));
 }
 
 
@@ -65,13 +68,10 @@ async function getProfile(userId) {
 // SUPPLIER QUERIES
 // ============================================================
 
-async function getSuppliersByTrade(tradeType, postcode = null) {
+export async function getSuppliersByTrade(tradeType, postcode = null) {
   let query = supabase
     .from('suppliers')
-    .select(`
-      *,
-      supplier_postcodes (postcode_prefix)
-    `)
+    .select(`*, supplier_postcodes (postcode_prefix)`)
     .eq('trade_type', tradeType)
     .eq('is_active', true)
     .order('rating_avg', { ascending: false });
@@ -79,7 +79,6 @@ async function getSuppliersByTrade(tradeType, postcode = null) {
   const { data, error } = await query;
   if (error) throw error;
 
-  // If postcode provided, filter to matching coverage areas
   if (postcode && data) {
     const prefix = postcode.split(' ')[0].toUpperCase();
     return data.filter(s =>
@@ -91,18 +90,14 @@ async function getSuppliersByTrade(tradeType, postcode = null) {
   return data;
 }
 
-async function getSupplierById(supplierId) {
+export async function getSupplierById(supplierId) {
   const { data, error } = await supabase
     .from('suppliers')
     .select(`
       *,
       reviews (
-        overall_rating,
-        quality_rating,
-        communication_rating,
-        value_rating,
-        narrative,
-        created_at,
+        overall_rating, quality_rating, communication_rating,
+        value_rating, narrative, created_at,
         profiles:reviewer_id (full_name)
       ),
       supplier_files (file_type, storage_path, file_name),
@@ -114,7 +109,7 @@ async function getSupplierById(supplierId) {
   return data;
 }
 
-async function registerSupplier(supplierData) {
+export async function registerSupplier(supplierData) {
   const { data, error } = await supabase
     .from('suppliers')
     .insert([supplierData])
@@ -124,7 +119,7 @@ async function registerSupplier(supplierData) {
   return data;
 }
 
-async function updateSupplier(supplierId, updates) {
+export async function updateSupplier(supplierId, updates) {
   const { data, error } = await supabase
     .from('suppliers')
     .update({ ...updates, updated_at: new Date().toISOString() })
@@ -137,103 +132,10 @@ async function updateSupplier(supplierId, updates) {
 
 
 // ============================================================
-// PROJECT / LEAD SUBMISSION (homeowner submits requirements)
+// LEADS (supplier dashboard)
 // ============================================================
 
-async function submitProject(projectData) {
-  // 1. Create the project
-  const { data: project, error: projectError } = await supabase
-    .from('projects')
-    .insert([{
-      trade_type: projectData.trade_type,
-      survey_type: projectData.survey_type || null,
-      property_postcode: projectData.property_postcode,
-      property_type: projectData.property_type || null,
-      bedrooms: projectData.bedrooms || null,
-      contact_name: projectData.contact_name,
-      contact_phone: projectData.contact_phone || null,
-      contact_email: projectData.contact_email,
-      scope_notes: projectData.scope_notes || null,
-      budget_range: projectData.budget_range || null,
-      status: 'open'
-    }])
-    .select()
-    .single();
-
-  if (projectError) throw projectError;
-
-  // 2. Save trade-specific requirements
-  if (projectData.service_category || projectData.scope_notes) {
-    await supabase
-      .from('trade_requirements')
-      .insert([{
-        project_id: project.id,
-        trade_type: projectData.trade_type,
-        service_category: projectData.service_category || null,
-        budget_range: projectData.budget_range || null,
-        scope_notes: projectData.scope_notes || null,
-        postcode: projectData.property_postcode,
-        contact_name: projectData.contact_name,
-        contact_number: projectData.contact_phone || null
-      }]);
-  }
-
-  // 3. Create lead for auto-matching
-  const { data: lead, error: leadError } = await supabase
-    .from('leads')
-    .insert([{
-      project_id: project.id,
-      status: 'new'
-    }])
-    .select()
-    .single();
-
-  if (leadError) throw leadError;
-
-  return { project, lead };
-}
-
-
-// ============================================================
-// QUOTES (supplier sends quote to homeowner)
-// ============================================================
-
-async function submitQuote(quoteData) {
-  const { data, error } = await supabase
-    .from('quotes')
-    .insert([{
-      project_id: quoteData.project_id,
-      supplier_id: quoteData.supplier_id,
-      price_min: quoteData.price_min,
-      price_max: quoteData.price_max,
-      message: quoteData.message || null,
-      status: 'pending'
-    }])
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
-}
-
-async function getQuotesForProject(projectId) {
-  const { data, error } = await supabase
-    .from('quotes')
-    .select(`
-      *,
-      suppliers (company_name, trade_type, rating_avg, review_count, is_verified)
-    `)
-    .eq('project_id', projectId)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return data;
-}
-
-
-// ============================================================
-// LEADS (supplier's dashboard)
-// ============================================================
-
-async function getLeadsForSupplier(supplierId) {
+export async function getLeadsForSupplier(supplierId) {
   const { data, error } = await supabase
     .from('leads_matched')
     .select(`
@@ -241,15 +143,9 @@ async function getLeadsForSupplier(supplierId) {
       leads!inner (
         status,
         projects:project_id (
-          trade_type,
-          property_postcode,
-          property_type,
-          contact_name,
-          contact_email,
-          contact_phone,
-          scope_notes,
-          budget_range,
-          created_at
+          trade_type, property_postcode, property_type,
+          contact_name, contact_email, contact_phone,
+          scope_notes, budget_range, created_at
         )
       )
     `)
@@ -259,7 +155,7 @@ async function getLeadsForSupplier(supplierId) {
   return data;
 }
 
-async function respondToLead(matchId, accepted, declineReason = null) {
+export async function respondToLead(matchId, accepted, declineReason = null) {
   const updates = accepted
     ? { status: 'accepted', accepted_at: new Date().toISOString() }
     : { status: 'declined', declined_at: new Date().toISOString(), decline_reason: declineReason };
@@ -276,10 +172,42 @@ async function respondToLead(matchId, accepted, declineReason = null) {
 
 
 // ============================================================
+// QUOTES
+// ============================================================
+
+export async function submitQuote(quoteData) {
+  const { data, error } = await supabase
+    .from('quotes')
+    .insert([{
+      project_id: quoteData.project_id,
+      supplier_id: quoteData.supplier_id,
+      price_min: quoteData.price_min,
+      price_max: quoteData.price_max,
+      message: quoteData.message || null,
+      status: 'pending'
+    }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function getQuotesForProject(projectId) {
+  const { data, error } = await supabase
+    .from('quotes')
+    .select(`*, suppliers (company_name, trade_type, rating_avg, review_count, is_verified)`)
+    .eq('project_id', projectId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+
+// ============================================================
 // REVIEWS
 // ============================================================
 
-async function submitReview(reviewData) {
+export async function submitReview(reviewData) {
   const { data, error } = await supabase
     .from('reviews')
     .insert([{
@@ -298,15 +226,27 @@ async function submitReview(reviewData) {
   return data;
 }
 
-async function getReviewsForSupplier(supplierId) {
+export async function getReviewsForSupplier(supplierId) {
   const { data, error } = await supabase
     .from('reviews')
-    .select(`
-      *,
-      profiles:reviewer_id (full_name)
-    `)
+    .select(`*, profiles:reviewer_id (full_name)`)
     .eq('supplier_id', supplierId)
     .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+
+// ============================================================
+// PROFILE
+// ============================================================
+
+export async function getProfile(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
   if (error) throw error;
   return data;
 }
@@ -316,7 +256,7 @@ async function getReviewsForSupplier(supplierId) {
 // UI HELPERS
 // ============================================================
 
-function renderStars(rating, maxStars = 5) {
+export function renderStars(rating, maxStars = 5) {
   let html = '';
   for (let i = 1; i <= maxStars; i++) {
     if (i <= Math.floor(rating)) {
@@ -330,7 +270,7 @@ function renderStars(rating, maxStars = 5) {
   return html;
 }
 
-function showToast(message, type = 'success') {
+export function showToast(message, type = 'success') {
   const toast = document.createElement('div');
   const bg = type === 'success' ? 'bg-green-600' : type === 'error' ? 'bg-red-600' : 'bg-blue-600';
   toast.className = `fixed bottom-6 right-6 ${bg} text-white px-6 py-3 rounded-lg shadow-lg z-[9999] transition-opacity duration-300`;
@@ -339,7 +279,7 @@ function showToast(message, type = 'success') {
   setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
-function setLoading(button, loading) {
+export function setLoading(button, loading) {
   if (loading) {
     button.dataset.originalText = button.textContent;
     button.textContent = 'Loading...';
@@ -354,24 +294,27 @@ function setLoading(button, loading) {
 
 
 // ============================================================
-// AUTH STATE — update nav on every page
+// AUTH NAV — update nav on every page that uses data-auth attrs
 // ============================================================
 
 async function updateNavForAuth() {
-  const user = await getCurrentUser();
-  const signUpBtn = document.querySelector('[data-auth="signup-btn"]');
-  const authMenu = document.querySelector('[data-auth="user-menu"]');
+  try {
+    const { user } = await getUser();
+    const signUpBtn = document.querySelector('[data-auth="signup-btn"]');
+    const authMenu = document.querySelector('[data-auth="user-menu"]');
 
-  if (user && signUpBtn) {
-    const profile = await getProfile(user.id);
-    signUpBtn.style.display = 'none';
-    if (authMenu) {
-      authMenu.style.display = 'flex';
-      const nameEl = authMenu.querySelector('[data-auth="user-name"]');
-      if (nameEl) nameEl.textContent = profile?.full_name || user.email;
+    if (user && signUpBtn) {
+      const profile = await getProfile(user.id).catch(() => null);
+      signUpBtn.style.display = 'none';
+      if (authMenu) {
+        authMenu.style.display = 'flex';
+        const nameEl = authMenu.querySelector('[data-auth="user-name"]');
+        if (nameEl) nameEl.textContent = profile?.full_name || user.email;
+      }
     }
+  } catch {
+    // No active session — nav stays in logged-out state
   }
 }
 
-// Run on every page load
 document.addEventListener('DOMContentLoaded', updateNavForAuth);
