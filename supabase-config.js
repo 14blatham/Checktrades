@@ -153,9 +153,10 @@ export async function getLeadsForSupplier(supplierId) {
 }
 
 export async function respondToLead(leadId, accepted, declineReason = null) {
+  // Valid leads.status values: 'new' | 'accepted' | 'rejected' | 'contacted'
   const updates = accepted
     ? { status: 'accepted' }
-    : { status: 'declined', decline_reason: declineReason };
+    : { status: 'rejected' };
 
   const { data, error } = await supabase
     .from('leads')
