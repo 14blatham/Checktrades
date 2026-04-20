@@ -408,6 +408,16 @@ if (supplier) {
   }
 }
 
+// ── Contact modal ──
+function showContactModal(name, phone, email) {
+  document.getElementById('modal-name').textContent = name || 'Homeowner';
+  document.getElementById('modal-phone-text').textContent = phone || 'No phone provided';
+  document.getElementById('modal-email-text').textContent = email || 'No email provided';
+  document.getElementById('modal-phone').href = phone ? `tel:${phone}` : '#';
+  document.getElementById('modal-email').href = email ? `mailto:${email}` : '#';
+  document.getElementById('contact-modal').classList.remove('hidden');
+}
+
 // ── Accept lead (global) ──
 window.acceptLead = async (leadId, btn) => {
   btn.textContent = 'Accepting...';
@@ -430,6 +440,7 @@ window.acceptLead = async (leadId, btn) => {
         <span class="material-symbols-outlined text-sm">mail</span> ${p?.contact_email || ''}
       </a>
     </div>`;
+  showContactModal(p?.contact_name, p?.contact_phone, p?.contact_email);
 };
 
 // ── Sign out (wire up nav button) ──
@@ -446,4 +457,40 @@ if (signupBtn) {
         <!-- Supabase Connection -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
+
+<!-- Contact Details Modal -->
+<div id="contact-modal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-primary/60 backdrop-blur-sm hidden" onclick="if(event.target===this)this.classList.add('hidden')">
+  <div class="bg-surface-container-lowest w-full max-w-sm mx-4 shadow-2xl">
+    <div class="bg-primary px-8 py-6 flex justify-between items-start">
+      <div>
+        <p class="font-label text-[10px] uppercase tracking-[0.2em] text-on-primary/50 mb-1">Lead Accepted</p>
+        <h2 id="modal-name" class="font-headline text-2xl text-on-primary"></h2>
+      </div>
+      <button onclick="document.getElementById('contact-modal').classList.add('hidden')" class="text-on-primary/50 hover:text-on-primary transition-colors mt-1">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <div class="p-8 space-y-3">
+      <a id="modal-phone" href="#" class="flex items-center gap-4 p-4 bg-surface-container-low hover:bg-surface-container transition-colors group rounded-sm">
+        <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1">phone</span>
+        <div>
+          <p class="text-[10px] font-label uppercase tracking-widest text-secondary mb-0.5">Phone</p>
+          <p id="modal-phone-text" class="font-body font-semibold text-primary text-sm group-hover:underline"></p>
+        </div>
+      </a>
+      <a id="modal-email" href="#" class="flex items-center gap-4 p-4 bg-surface-container-low hover:bg-surface-container transition-colors group rounded-sm">
+        <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings:'FILL' 1">mail</span>
+        <div>
+          <p class="text-[10px] font-label uppercase tracking-widest text-secondary mb-0.5">Email</p>
+          <p id="modal-email-text" class="font-body font-semibold text-primary text-sm group-hover:underline break-all"></p>
+        </div>
+      </a>
+    </div>
+    <div class="px-8 pb-8">
+      <button onclick="document.getElementById('contact-modal').classList.add('hidden')" class="w-full border border-outline-variant/20 py-3 text-xs font-bold uppercase tracking-widest text-primary hover:bg-surface-container-low transition-colors">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
 </body></html>
