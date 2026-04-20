@@ -17,8 +17,11 @@
     e.preventDefault();
     document.body.classList.add('page-leaving');
     setTimeout(function () { window.location.href = href; }, 200);
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('[data-icon="menu"]')?.addEventListener('click', () => {
-  document.querySelector('nav ul')?.classList.toggle('hidden');
-});
+      document.querySelector('nav ul')?.classList.toggle('hidden');
+    });
   });
 })();
