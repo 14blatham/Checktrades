@@ -246,7 +246,7 @@
                                 </p>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+<button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="Trent Structural Engineering" data-supplier-detail="Structural Engineer · 4.1 miles away">Contact Supplier</button>
 <button class="bg-transparent border border-outline-variant/30 text-primary px-8 py-3 text-sm font-bold hover:bg-surface-container-low transition-colors">View Profile</button>
 <div class="ml-auto flex items-center gap-2">
 <span class="font-headline text-xl text-primary">4.7</span>
@@ -293,7 +293,7 @@
                                 </p>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+<button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="Leicester Surveying Assoc." data-supplier-detail="Surveyor · 21.8 miles away">Contact Supplier</button>
 <button class="bg-transparent border border-outline-variant/30 text-primary px-8 py-3 text-sm font-bold hover:bg-surface-container-low transition-colors">View Profile</button>
 <div class="ml-auto flex items-center gap-2">
 <span class="font-headline text-xl text-primary">4.5</span>
@@ -376,6 +376,12 @@ async function loadQuotes() {
 
   const container = document.getElementById('quotes-container');
   // Keep existing hardcoded cards as fallback but prepend real data
+   const escapeAttr = (value = '') => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');    
   const realCards = suppliers.map((s, i) => {
     const stars = Array.from({length: 5}, (_, j) =>
       `<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' ${j < Math.round(s.rating_avg) ? 1 : 0};">star</span>`
