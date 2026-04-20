@@ -1,7 +1,7 @@
 // trade-requirements.js
 // Shared logic for all trade requirement forms (Architect, Electrician, Structural Engineer, Surveyor)
 
-import { supabase, getUser } from './supabase-client.js';
+import { supabase, getUser } from './supabaseconfig.js';
 
 export function initTradeRequirementForm(tradeType) {
   const form = document.querySelector('form') || document.querySelector('[type="submit"]')?.closest('form') || document.body;
