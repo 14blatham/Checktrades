@@ -195,19 +195,9 @@
 <section class="bg-surface-container-low p-8 rounded">
 <h3 class="font-headline text-xl text-primary mb-4">Postcode Coverage</h3>
 <p class="text-xs text-secondary mb-6 leading-relaxed">Define the regional boundaries for your service inquiries. Click to remove or add new sectors.</p>
-<div class="flex flex-wrap gap-2 mb-6">
-<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20">
-                            NG (Nottingham) <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
-</span>
-<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20">
-                            DE (Derby) <span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
-</span>
-<span class="inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20 text-secondary italic">
-                            LE (Leicester) <span class="material-symbols-outlined text-[14px] cursor-pointer">add</span>
-</span>
-</div>
+<div id="postcode-tags" class="flex flex-wrap gap-2 mb-6"></div>
 <div class="relative">
-<input class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" placeholder="Add postcode prefix..." type="text"/>
+<input id="postcode-input" class="w-full bg-surface-container-lowest border-none text-sm p-3 focus:ring-0 focus:border-b focus:border-primary transition-all rounded-sm" placeholder="Add postcode prefix, press Enter..." type="text"/>
 <span class="absolute right-3 top-3 material-symbols-outlined text-secondary text-lg">search</span>
 </div>
 </section>
@@ -313,24 +303,35 @@ if (supplier) {
 
   const container = document.getElementById('leads-container');
   if (leads && leads.length > 0) {
-    container.innerHTML = leads.map(lead => `
-      <div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
-        <div class="space-y-2">
-          <div class="flex items-center gap-3">
-            <span class="font-headline text-xl">${lead.projects?.contact_name || 'Anonymous'}</span>
-            <span class="bg-secondary-container/40 px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-tighter">${lead.status}</span>
+    container.innerHTML = leads.map(lead => {
+      const accepted = lead.status === 'accepted';
+      const actionsHtml = accepted
+        ? `<div class="space-y-1 text-sm text-right">
+            <p class="text-[10px] font-label uppercase tracking-widest text-secondary mb-1">Contact Details</p>
+            <a href="tel:${lead.projects?.contact_phone || ''}" class="flex items-center gap-1 text-primary hover:underline justify-end">
+              <span class="material-symbols-outlined text-sm">phone</span> ${lead.projects?.contact_phone || 'No phone provided'}
+            </a>
+            <a href="mailto:${lead.projects?.contact_email || ''}" class="flex items-center gap-1 text-primary hover:underline justify-end">
+              <span class="material-symbols-outlined text-sm">mail</span> ${lead.projects?.contact_email || ''}
+            </a>
+          </div>`
+        : `<button onclick="acceptLead('${lead.id}', this)" class="bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90">Accept Lead</button>`;
+      return `
+        <div class="bg-surface-container-lowest p-6 flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow">
+          <div class="space-y-2">
+            <div class="flex items-center gap-3">
+              <span class="font-headline text-xl">${lead.projects?.contact_name || 'Anonymous'}</span>
+              <span class="bg-secondary-container/40 px-3 py-1 rounded-full text-[10px] font-label uppercase tracking-tighter">${lead.status}</span>
+            </div>
+            <p class="text-sm text-secondary font-body">${lead.projects?.scope_notes || lead.projects?.survey_type || 'Service enquiry'}</p>
+            <div class="flex items-center gap-4 text-xs font-label text-on-surface-variant">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> ${lead.projects?.property_postcode || ''}</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> ${new Date(lead.created_at).toLocaleDateString()}</span>
+            </div>
           </div>
-          <p class="text-sm text-secondary font-body">${lead.projects?.scope_notes || lead.projects?.survey_type || 'Service enquiry'}</p>
-          <div class="flex items-center gap-4 text-xs font-label text-on-surface-variant">
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">location_on</span> ${lead.projects?.property_postcode || ''}</span>
-            <span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> ${new Date(lead.created_at).toLocaleDateString()}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-3">
-          <button onclick="acceptLead('${lead.id}')" class="bg-primary text-white px-4 py-2 text-xs font-bold uppercase tracking-wider hover:opacity-90">Accept Lead</button>
-        </div>
-      </div>
-    `).join('');
+          <div class="flex items-center gap-3">${actionsHtml}</div>
+        </div>`;
+    }).join('');
   }
 
   // ── Save pricing ──
@@ -365,12 +366,70 @@ if (supplier) {
       document.querySelector('.font-headline.text-lg').textContent = `Status: ${newState ? 'Active' : 'Inactive'}`;
     });
   }
+
+  // ── Postcode coverage ──
+  const { data: existingPostcodes } = await supabase
+    .from('supplier_postcodes')
+    .select('id, postcode_prefix')
+    .eq('supplier_id', supplier.id);
+
+  function renderPostcodeTag(p) {
+    const span = document.createElement('span');
+    span.className = 'inline-flex items-center gap-1 bg-surface-container-lowest px-3 py-1 text-xs font-label rounded-full border border-outline-variant/20';
+    span.innerHTML = `${p.postcode_prefix} <span class="material-symbols-outlined text-[14px] cursor-pointer hover:text-red-500 transition-colors">close</span>`;
+    span.querySelector('.material-symbols-outlined').addEventListener('click', async () => {
+      const { error } = await supabase.from('supplier_postcodes').delete().eq('id', p.id);
+      if (!error) span.remove();
+    });
+    return span;
+  }
+
+  const tagsContainer = document.getElementById('postcode-tags');
+  if (tagsContainer) {
+    (existingPostcodes || []).forEach(p => tagsContainer.appendChild(renderPostcodeTag(p)));
+
+    const postcodeInput = document.getElementById('postcode-input');
+    if (postcodeInput) {
+      postcodeInput.addEventListener('keydown', async (e) => {
+        if (e.key !== 'Enter') return;
+        const prefix = postcodeInput.value.trim().toUpperCase().replace(/[^A-Z]/g, '');
+        if (!prefix) return;
+        const { data: newRow, error } = await supabase
+          .from('supplier_postcodes')
+          .insert({ supplier_id: supplier.id, postcode_prefix: prefix })
+          .select()
+          .single();
+        if (!error && newRow) {
+          tagsContainer.appendChild(renderPostcodeTag(newRow));
+          postcodeInput.value = '';
+        }
+      });
+    }
+  }
 }
 
 // ── Accept lead (global) ──
-window.acceptLead = async (leadId) => {
-  await supabase.from('leads').update({ status: 'accepted' }).eq('id', leadId);
-  window.location.reload();
+window.acceptLead = async (leadId, btn) => {
+  btn.textContent = 'Accepting...';
+  btn.disabled = true;
+  const { error } = await supabase.from('leads').update({ status: 'accepted' }).eq('id', leadId);
+  if (error) { btn.textContent = 'Accept Lead'; btn.disabled = false; return; }
+  const { data: lead } = await supabase
+    .from('leads')
+    .select('projects(contact_name, contact_phone, contact_email)')
+    .eq('id', leadId)
+    .single();
+  const p = lead?.projects;
+  btn.parentElement.innerHTML = `
+    <div class="space-y-1 text-sm text-right">
+      <p class="text-[10px] font-label uppercase tracking-widest text-secondary mb-1">Contact Details</p>
+      <a href="tel:${p?.contact_phone || ''}" class="flex items-center gap-1 text-primary hover:underline justify-end">
+        <span class="material-symbols-outlined text-sm">phone</span> ${p?.contact_phone || 'No phone provided'}
+      </a>
+      <a href="mailto:${p?.contact_email || ''}" class="flex items-center gap-1 text-primary hover:underline justify-end">
+        <span class="material-symbols-outlined text-sm">mail</span> ${p?.contact_email || ''}
+      </a>
+    </div>`;
 };
 
 // ── Sign out (wire up nav button) ──

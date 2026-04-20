@@ -85,16 +85,23 @@ export function initTradeRequirementForm(tradeType) {
       contact_number: phone
     });
 
-    // 3. Generate leads for matching suppliers
-    const { data: suppliers } = await supabase
+    // 3. Generate leads — only for suppliers covering this postcode
+    const postcodePrefix = postcode.trim().toUpperCase().split(' ')[0].replace(/\d.*$/, '');
+
+    const { data: allSuppliers } = await supabase
       .from('suppliers')
-      .select('id')
+      .select('id, postcode_coverage, supplier_postcodes(postcode_prefix)')
       .eq('trade_type', tradeType)
       .eq('is_active', true);
 
-    if (suppliers && suppliers.length > 0) {
+    const matched = (allSuppliers || []).filter(s =>
+      s.postcode_coverage?.includes(postcodePrefix) ||
+      s.supplier_postcodes?.some(p => p.postcode_prefix === postcodePrefix)
+    );
+
+    if (matched.length > 0) {
       await supabase.from('leads').insert(
-        suppliers.map(s => ({ project_id: project.id, supplier_id: s.id, status: 'new' }))
+        matched.map(s => ({ project_id: project.id, supplier_id: s.id, status: 'new' }))
       );
     }
 
