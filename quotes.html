@@ -3,7 +3,8 @@
 <html class="light" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="./tailwind.css" rel="stylesheet"/>
+<script>window.tailwind = window.tailwind || {}; window.tailwind.config = window.tailwind.config || {};</script>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;0,700;1,400;1,700&amp;family=Manrope:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -199,7 +200,7 @@
                                 </p>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+<button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="Derbyshire Property Consultants" data-supplier-detail="Surveyor · 12.4 miles away">Contact Supplier</button>
 <button class="bg-transparent border border-outline-variant/30 text-primary px-8 py-3 text-sm font-bold hover:bg-surface-container-low transition-colors">View Profile</button>
 <div class="ml-auto flex items-center gap-2">
 <span class="font-headline text-xl text-primary">4.9</span>
@@ -246,7 +247,7 @@
                                 </p>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+<button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="Trent Structural Engineering" data-supplier-detail="Structural Engineer · 4.1 miles away">Contact Supplier</button>
 <button class="bg-transparent border border-outline-variant/30 text-primary px-8 py-3 text-sm font-bold hover:bg-surface-container-low transition-colors">View Profile</button>
 <div class="ml-auto flex items-center gap-2">
 <span class="font-headline text-xl text-primary">4.7</span>
@@ -293,7 +294,7 @@
                                 </p>
 </div>
 <div class="flex items-center gap-4">
-<button class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+<button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="Leicester Surveying Assoc." data-supplier-detail="Surveyor · 21.8 miles away">Contact Supplier</button>
 <button class="bg-transparent border border-outline-variant/30 text-primary px-8 py-3 text-sm font-bold hover:bg-surface-container-low transition-colors">View Profile</button>
 <div class="ml-auto flex items-center gap-2">
 <span class="font-headline text-xl text-primary">4.5</span>
@@ -375,6 +376,12 @@ async function loadQuotes() {
   if (!suppliers || suppliers.length === 0) return;
 
   const container = document.getElementById('quotes-container');
+  const escapeAttr = (value = '') => String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
   // Keep existing hardcoded cards as fallback but prepend real data
   const realCards = suppliers.map((s, i) => {
     const stars = Array.from({length: 5}, (_, j) =>
@@ -405,7 +412,7 @@ async function loadQuotes() {
             <p class="text-on-surface-variant leading-relaxed text-sm mb-6 max-w-xl">${s.description || 'Professional ' + s.trade_type.toLowerCase() + ' serving the East Midlands region.'}</p>
           </div>
           <div class="flex items-center gap-4">
-            <button onclick="contactSupplier('${s.company_name}','${s.primary_postcode}','${s.trade_type}')" class="bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95">Contact Supplier</button>
+            <button class="contact-supplier-btn bg-primary text-on-primary px-8 py-3 text-sm font-bold transition-transform active:scale-95" data-supplier-name="${escapeAttr(s.company_name)}" data-supplier-detail="${escapeAttr(`${s.trade_type} · ${s.primary_postcode}`)}">Contact Supplier</button>
             <div class="ml-auto flex items-center gap-2">
               <span class="font-headline text-xl text-primary">${(s.rating_avg || 0).toFixed(1)}</span>
               <div class="flex text-tertiary-fixed-dim">${stars}</div>
@@ -421,13 +428,25 @@ async function loadQuotes() {
 
 loadQuotes();
 
-window.contactSupplier = async (name, postcode, tradeType) => {
+window.contactSupplier = async (name, detailOrPostcode, tradeType = null) => {
   const { user } = await getUser();
-  if (!user) { window.location.href = 'loginpage.html'; return; }
+  if (!user) {
+    const redirect = encodeURIComponent(window.location.pathname + window.location.search);
+    window.location.href = `loginpage.html?redirect=${redirect}`;
+    return;
+  }
+
+  const detail = tradeType ? `${tradeType} · ${detailOrPostcode}` : (detailOrPostcode || '');
   document.getElementById('sq-modal-name').textContent = name;
-  document.getElementById('sq-modal-detail').textContent = `${tradeType} · ${postcode}`;
+  document.getElementById('sq-modal-detail').textContent = detail;
   document.getElementById('supplier-contact-modal').classList.remove('hidden');
 };
+
+document.getElementById('quotes-container').addEventListener('click', async (event) => {
+  const btn = event.target.closest('.contact-supplier-btn');
+  if (!btn) return;
+  await window.contactSupplier(btn.dataset.supplierName || 'Supplier', btn.dataset.supplierDetail || '');
+});
 </script>
 </footer>
 
